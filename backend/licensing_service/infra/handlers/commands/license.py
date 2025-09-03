@@ -22,20 +22,15 @@ class CreateLicenseCommandHandler(LicenseCommandHandler):
         and creates event signaling that
         operation was successfully executed.
         """
-        # licenses_service: LicenseService = LicenseService(
-        #     domain_event_bus=self.domain_event_bus,
-        #     infra_event_bus=self.infra_event_bus
-        # )
         subdivision_service: SubdivisionService = SubdivisionService(
             domain_event_bus=self.domain_event_bus,
             infra_event_bus=self.infra_event_bus
         )
         print(f"await command.to_dict(): {await command.to_dict()}")
-        # license_in: License = License(**await command.to_dict())
-        license = await subdivision_service.add_license(
+        subdivision = await subdivision_service.add_license(
             add_license_command=command
         )
-        return license
+        return subdivision
 
 
 class UpdateLicenseCommandHandler(LicenseCommandHandler):
@@ -46,15 +41,14 @@ class UpdateLicenseCommandHandler(LicenseCommandHandler):
         and creates event signaling that
         operation was successfully executed.
         """
-        licenses_service: LicenseService = LicenseService(
+        subdivision_service: SubdivisionService = SubdivisionService(
             domain_event_bus=self.domain_event_bus,
             infra_event_bus=self.infra_event_bus
         )
-        license_in: License = License(**await command.to_dict())
-        license = await licenses_service.update_license(
-            id=license_in.id, license=license_in
+        subdivision = await subdivision_service.update_license(
+            update_license_command=command
         )
-        return license
+        return subdivision
 
 
 class DeleteLicenseCommandHandler(LicenseCommandHandler):

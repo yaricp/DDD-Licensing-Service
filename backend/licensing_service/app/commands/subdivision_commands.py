@@ -73,3 +73,9 @@ class SubdivisionCommandUseCase:
             CreateLicenseCommand(**kwargs)
         )
         return self.messagebus_handler.command_result
+
+    async def subdivision_update_license(self, **kwargs) -> Subdivision:
+        await self.messagebus_handler.handle(
+            UpdateLicenseCommand(**kwargs)
+        )
+        return self.messagebus_handler.command_result

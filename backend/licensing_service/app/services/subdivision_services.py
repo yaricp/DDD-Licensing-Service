@@ -118,6 +118,7 @@ class SubdivisionService:
             if not subdivision:
                 raise SubdivisionNotFoundError
             subdivision.update_license(
+                id=update_license_command.id,
                 name=update_license_command.name,
                 description=update_license_command.description
             )

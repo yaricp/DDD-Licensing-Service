@@ -15,14 +15,12 @@ class GlobalMessageBusHandler:
 
     def __init__(
         self,
-        # uow: AbstractUnitOfWork,
         domain_event_bus: AbstractEventBus,
         infra_event_bus: AbstractEventBus,
         event_handlers: Dict[Type[AbstractEvent], List[AbstractEventHandler]],
         command_handlers: Dict[Type[AbstractCommand], AbstractCommandHandler],
     ) -> None:
 
-        # self._uow: AbstractUnitOfWork = uow
         self._domain_event_bus = domain_event_bus
         self._infra_event_bus = infra_event_bus
         self._event_handlers: Dict[

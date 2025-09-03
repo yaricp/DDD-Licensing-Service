@@ -16,7 +16,7 @@ from ....app.commands.subdivision_commands import (
 from ..schemas.subdivision import (
     Subdivision, SubdivisionCreate, SubdivisionUpdate
 )
-from ..schemas.license import LicenseCreate
+from ..schemas.license import LicenseCreate, LicenseUpdate
 from ..services.utils import BaseMapper
 
 
@@ -126,6 +126,19 @@ async def subdivision_create_license(
         messagebus_handler=messagebus_handler
     )
     command_result = await command.subdivision_create_license(
+        **license_data.model_dump()
+    )
+    return BaseMapper.to_schema(Subdivision, command_result)
+
+
+async def subdivision_update_license(
+    license_data: LicenseUpdate,
+    messagebus_handler: GlobalMessageBusHandler
+) -> Subdivision:
+    command = SubdivisionCommandUseCase(
+        messagebus_handler=messagebus_handler
+    )
+    command_result = await command.subdivision_update_license(
         **license_data.model_dump()
     )
     return BaseMapper.to_schema(Subdivision, command_result)

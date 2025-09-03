@@ -61,7 +61,7 @@ class Subdivision(AbstractAggregateRoot):
         self.licenses.append(new_license)
 
     def update_license(
-        self, name: str, description: str
+        self, id: UUID, name: str, description: str
     ) -> License:
         filtered_licenses = list(filter(
             lambda x: x.id == id, self.licenses

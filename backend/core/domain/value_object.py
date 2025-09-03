@@ -1,8 +1,9 @@
 import uuid
-from enum import Enum, EnumMeta
+from enum import EnumMeta
 from typing import Any, TypeVar
 
 from backend.core.domain.exception import ValueObjectEnumError
+
 
 ValueObjectType = TypeVar("ValueObjectType", bound="ValueObject")
 

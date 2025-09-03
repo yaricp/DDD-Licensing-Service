@@ -1,12 +1,10 @@
 from abc import ABC
-from uuid import UUID
-from dataclasses import field, dataclass, asdict
-from typing import Generic, Optional, Any, Dict, Set, TypeVar
+from dataclasses import dataclass, asdict
+from typing import Optional, Any, Dict, Set, TypeVar
 
 from .value_object import GenericUUID
 
 
-# EntityType = TypeVar("EntityType", bound="Entity")
 EntityId = TypeVar("EntityId", bound="GenericUUID")
 
 

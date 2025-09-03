@@ -7,14 +7,14 @@ from ...deps import get_messagebus_handler
 from ..schemas.subdivision import (
     Subdivision, SubdivisionCreate, SubdivisionUpdate
 )
-from ..schemas.license import LicenseCreate
+from ..schemas.license import LicenseCreate, LicenseUpdate
 from ..services.subdivision import (
     get_subdivision, active_subdivision_license,
     subdivision_add_statistic_row,
     create_subdivision, get_all_subdivisions,
     update_subdivision, delete_subdivision,
     deactive_subdivision_license,
-    subdivision_create_license
+    subdivision_create_license, subdivision_update_license
 )
 
 
@@ -147,6 +147,22 @@ async def create_license_route(
     messagebus_handler=Depends(get_messagebus_handler)
 ) -> Subdivision:
     subdivision = await subdivision_create_license(
+        license_data=item_in,
+        messagebus_handler=messagebus_handler
+    )
+    return subdivision
+
+
+@router.put(
+    path="/{id}/update_license/{license_id}",
+    name="Update License",
+    response_model=Subdivision
+)
+async def update_license_route(
+    id: UUID, item_in: LicenseUpdate,
+    messagebus_handler=Depends(get_messagebus_handler)
+) -> Subdivision:
+    subdivision = await subdivision_update_license(
         license_data=item_in,
         messagebus_handler=messagebus_handler
     )
