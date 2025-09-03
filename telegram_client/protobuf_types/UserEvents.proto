@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message UserEvent {
+    enum Action {
+      CREATED = 0;
+      UPDATED = 1;
+      DELETED = 2;
+    }
+    string type_name = 1;
+    string email = 2;
+    string tg_id = 3;
+    string user_id = 4;
+    bool superadmin = 5;
+    string partner_id = 6;
+    string attraction_id = 7;
+    Action action = 8;
+}
