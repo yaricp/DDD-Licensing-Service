@@ -59,9 +59,11 @@ class DeleteLicenseCommandHandler(LicenseCommandHandler):
         and creates event signaling that
         operation was successfully executed.
         """
-        licenses_service: LicenseService = LicenseService(
+        subdivision_service: SubdivisionService = SubdivisionService(
             domain_event_bus=self.domain_event_bus,
             infra_event_bus=self.infra_event_bus
         )
-        license = await licenses_service.delete_license(id=command.id)
-        return license
+        subdivision = await subdivision_service.delete_license(
+            delete_license_command=command
+        )
+        return subdivision

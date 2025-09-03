@@ -79,3 +79,9 @@ class SubdivisionCommandUseCase:
             UpdateLicenseCommand(**kwargs)
         )
         return self.messagebus_handler.command_result
+
+    async def subdivision_delete_license(self, id: UUID, subdivision_id: UUID) -> Subdivision:
+        await self.messagebus_handler.handle(
+            DeleteLicenseCommand(id=id, subdivision_id=subdivision_id)
+        )
+        return self.messagebus_handler.command_result

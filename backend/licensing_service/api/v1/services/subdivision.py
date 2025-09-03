@@ -142,3 +142,16 @@ async def subdivision_update_license(
         **license_data.model_dump()
     )
     return BaseMapper.to_schema(Subdivision, command_result)
+
+
+async def subdivision_delete_license(
+    subdivision_id: UUID, license_id: UUID,
+    messagebus_handler: GlobalMessageBusHandler
+) -> Subdivision:
+    command = SubdivisionCommandUseCase(
+        messagebus_handler=messagebus_handler
+    )
+    command_result = await command.subdivision_delete_license(
+        id=license_id, subdivision_id=subdivision_id
+    )
+    return BaseMapper.to_schema(Subdivision, command_result)

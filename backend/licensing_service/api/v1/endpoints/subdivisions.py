@@ -14,7 +14,8 @@ from ..services.subdivision import (
     create_subdivision, get_all_subdivisions,
     update_subdivision, delete_subdivision,
     deactive_subdivision_license,
-    subdivision_create_license, subdivision_update_license
+    subdivision_create_license, subdivision_update_license,
+    subdivision_delete_license
 )
 
 
@@ -164,6 +165,23 @@ async def update_license_route(
 ) -> Subdivision:
     subdivision = await subdivision_update_license(
         license_data=item_in,
+        messagebus_handler=messagebus_handler
+    )
+    return subdivision
+
+
+@router.delete(
+    path="/{id}/update_license/{license_id}",
+    name="Delete License",
+    response_model=Subdivision
+)
+async def delete_license_route(
+    id: UUID, license_id: UUID,
+    messagebus_handler=Depends(get_messagebus_handler)
+) -> Subdivision:
+    subdivision = await subdivision_delete_license(
+        subdivision_id=id,
+        license_id=license_id,
         messagebus_handler=messagebus_handler
     )
     return subdivision
