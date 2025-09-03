@@ -80,8 +80,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "main-topic:1:1"
       KAFKA_CFG_PROCESS_ROLES: broker
-    # volumes:
-    #   - ./data/kafka1/data:/var/lib/kafka/data
+    volumes:
+      - ./data/kafka1/data:/var/lib/kafka/data
     depends_on:
       - zookeeper
     

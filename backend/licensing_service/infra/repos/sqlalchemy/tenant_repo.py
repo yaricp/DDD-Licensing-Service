@@ -46,12 +46,12 @@ class SQLAlchemyTenantRepository(
         return tenant
 
     async def add(self, model: AbstractEntity) -> Tenant:
+        print(f"model: {model}")
         result: Result = await self._session.execute(
             insert(Tenant).values(
                 **await model.to_dict(
                     exclude={
-                        'id', 'user_id', 'users',
-                        'admins', 'subdivisions'
+                        "id", "users", "_domain_events", "subdivisions"
                     }
                 )
             ).returning(Tenant)

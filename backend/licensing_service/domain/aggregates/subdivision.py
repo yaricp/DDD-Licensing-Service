@@ -22,6 +22,7 @@ from ..value_objects.license_type import LicenseType
 from ..services.events.license_events import (
     LicenseActivatedEvent, LicenseDeactivatedEvent
 )
+from ..services.events.statistic_row_events import StatisticRowAddedEvent
 
 
 @dataclass(eq=False, slots=True)
@@ -32,9 +33,6 @@ class Subdivision(AbstractAggregateRoot):
     link_to_subdivision_processing_domain: Optional[str] = ""
     work_status: WorkStatus = WorkStatus.ACTIVE
     id: Optional[UUID] = None
-    _domain_events: List[object] = field(
-        default_factory=list, repr=False
-    )
     licenses: List[License] = field(default_factory=lambda: [])
     statistics: List[StatisticRow] = field(default_factory=lambda: [])
 
@@ -85,10 +83,10 @@ class Subdivision(AbstractAggregateRoot):
             self.deactivate()
         self.licenses.remove(current_license)
 
-    def pull_events(self) -> List[object]:
-        events = self._domain_events
-        self._domain_events = []
-        return events
+    # def pull_events(self) -> List[object]:
+    #     events = self._domain_events
+    #     self._domain_events = []
+    #     return events
 
     def activate(self):
         self.work_status = WorkStatus.ACTIVE
@@ -125,7 +123,7 @@ class Subdivision(AbstractAggregateRoot):
             )
 
     async def activate_license(
-        self, license_id: UUID, eventbus: AbstractEventBus
+        self, license_id: UUID, eventbus: AbstractEventBus | None
     ) -> None:
         print("activate_license started")
         filtered_license: Optional[License] = list(filter(
@@ -139,14 +137,15 @@ class Subdivision(AbstractAggregateRoot):
         license.check(self.total_count_requests)
         if license.is_active:
             self.activate()
-        eventbus.add_event(
-            LicenseActivatedEvent(
-                **await license.to_dict()
+        if eventbus:
+            eventbus.add_event(
+                LicenseActivatedEvent(
+                    **await license.to_dict()
+                )
             )
-        )
 
     async def deactivate_license(
-        self, license_id: UUID, eventbus: AbstractEventBus
+        self, license_id: UUID, eventbus: AbstractEventBus | None
     ) -> None:
         print("deactivate_license started")
         filtered_license: Optional[License] = list(filter(
@@ -158,13 +157,16 @@ class Subdivision(AbstractAggregateRoot):
         license = filtered_license[0]
         license.deactivate()
         self.deactivate()
-        eventbus.add_event(
-            LicenseDeactivatedEvent(
-                **await license.to_dict()
+        if eventbus:
+            eventbus.add_event(
+                LicenseDeactivatedEvent(
+                    **await license.to_dict()
+                )
             )
-        )
 
-    def save_day_statistic(self, stat_row: StatisticRow):
+    async def save_day_statistic(
+        self, stat_row: StatisticRow, eventbus: AbstractEventBus | None
+    ):
         print(f"stat_row: {stat_row}")
         if not self.active_license:
             raise LicenseInactiveError
@@ -176,9 +178,22 @@ class Subdivision(AbstractAggregateRoot):
         if (
             stat_row.count_requests + self.total_count_requests
         ) >= self.active_license.count_requests:
-            # self.domain_buss.event(SaveStatRowCommand)
-            self.deactivate_license()
+            deactivated_license = self.active_license
+            self.active_license.deactivate()
+            self.deactivate()
+            if eventbus:
+                eventbus.add_event(
+                    LicenseDeactivatedEvent(
+                        **await deactivated_license.to_dict()
+                    )
+                )
         self.statistics.append(stat_row)
+        if eventbus:
+            eventbus.add_event(
+                StatisticRowAddedEvent(
+                    **await stat_row.to_dict()
+                )
+            )
 
     @property
     def is_active(self) -> bool:
@@ -188,7 +203,6 @@ class Subdivision(AbstractAggregateRoot):
     def make(
         cls, name: str, location: str, tenant_id: UUID
     ) -> Subdivision:
-        print("Make a new aggregate")
         return cls(
             name=name, location=location, tenant_id=tenant_id,
             licenses=[],
@@ -208,6 +222,5 @@ class Subdivision(AbstractAggregateRoot):
             tenant_id=tenant_id, work_status=work_status,
             link_to_subdivision_processing_domain=(
                 link_to_subdivision_processing_domain
-            ), licenses=licenses, statistics=statistics,
-            _domain_events=[]
+            ), licenses=licenses, statistics=statistics
         )

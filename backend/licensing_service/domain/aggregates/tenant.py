@@ -26,7 +26,6 @@ class Tenant(AbstractAggregateRoot):
     id: Optional[UUID] = None
     users: List[User] = field(default_factory=lambda: [])
     subdivisions: List[Subdivision] = field(default_factory=lambda: [])
-    _domain_events: List[object] = field(default_factory=list, repr=False)
 
     def update(
         self, name: str, address: str, email: str, phone: str
@@ -36,14 +35,10 @@ class Tenant(AbstractAggregateRoot):
         self.email = email
         self.phone = phone
 
-    def __post_init__(self):
-        if not hasattr(self, "_domain_events"):
-            self._domain_events = []
-
-    def pull_events(self) -> List[object]:
-        events = self._domain_events
-        self._domain_events = []
-        return events
+    # def pull_events(self) -> List[object]:
+    #     events = self._domain_events
+    #     self._domain_events = []
+    #     return events
 
     @classmethod
     def make(
@@ -52,7 +47,7 @@ class Tenant(AbstractAggregateRoot):
         print("Factory method")
         return cls(
             name=name, address=address, email=email, phone=phone,
-            users=[], subdivisions=[], _domain_events=[]
+            users=[], subdivisions=[]
         )
 
     @classmethod
@@ -63,9 +58,9 @@ class Tenant(AbstractAggregateRoot):
         print("Make aggregate form DB method")
         return cls(
             id=id, name=name, address=address, email=email, phone=phone,
-            users=users, subdivisions=subdivisions, _domain_events=[]
+            users=users, subdivisions=subdivisions
         )
 
     def add_user(self, user: CreateUserCommand) -> None:
         "Adding user for current Tenant"
-        self._domain_events.append(user)
+        print("Adding user for current Tenant")

@@ -160,13 +160,15 @@ class SubdivisionService:
             subdivision = await uow.subdivisions.get(
                 id=subdivision_id
             )
+            if not subdivision:
+                raise SubdivisionNotFoundError
             new_stats_row = StatisticRow.make(
                 count_requests=new_stats_command.count_requests,
                 subdivision_id=new_stats_command.subdivision_id
             )
             # Adding a new stats row
-            subdivision.save_day_statistic(
-                stat_row=new_stats_row
+            await subdivision.save_day_statistic(
+                stat_row=new_stats_row, eventbus=self._domain_event_bus
             )
             # Saving subdivision aggregate to DB
             await uow.subdivisions.save(subdivision)
@@ -184,7 +186,9 @@ class SubdivisionService:
                 if self._infra_event_bus:
                     self._infra_event_bus.add_event(
                         SubdivisionLicenseExpiredEvent(
-                            **await subdivision.to_dict()
+                            **await subdivision.to_dict(
+                                exclude={"licenses", "statistics"}
+                            )
                         )
                     )
             return subdivision
