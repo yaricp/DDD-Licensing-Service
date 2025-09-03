@@ -14,7 +14,6 @@ services:
       - ${PORT}:${PORT}
     depends_on:
       - pg
-      - zookeeper
       - kafka
     volumes:
       - ./backend/alembic/versions:/alembic/versions
@@ -51,47 +50,67 @@ services:
     depends_on:
       - pg
 
-  zookeeper:
-    image: zookeeper
-    hostname: zookeeper
-    ports:
-      - "2181:2181"
-    environment:
-      ZOO_MY_ID: 1
-      ZOO_PORT: 2181
-      ZOO_SERVERS: server.1=zookeeper:2888:3888;2181
-    # volumes:
-    #   - ./data/zookeeper/data:/data
-    #   - ./data/zookeeper/datalog:/datalog
+  # zookeeper:
+  #   image: zookeeper
+  #   hostname: zookeeper
+  #   ports:
+  #     - "2181:2181"
+  #   environment:
+  #     ZOO_MY_ID: 1
+  #     ZOO_PORT: 2181
+  #     ZOO_SERVERS: server.1=zookeeper:2888:3888;2181
+  #   # volumes:
+  #   #   - ./data/zookeeper/data:/data
+  #   #   - ./data/zookeeper/datalog:/datalog
 
+  # kafka:
+  #   image: bitnami/kafka
+  #   hostname: kafka
+  #   ports:
+  #     - "9091:9091"
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_CLUSTER_ID: i7DivAfCTKC58UAp_FIfcQ
+  #     KAFKA_CFG_LISTENERS: INTERNAL://kafka:19091,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9091
+  #     KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19091,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9091
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+  #     KAFKA_CFG_NODE_ID: 1
+  #     KAFKA_ENABLE_KRAFT: yes
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_CREATE_TOPICS: "main-topic:1:1"
+  #     KAFKA_CFG_PROCESS_ROLES: broker
+  #     KAFKA_CFG_LOG_DIRS: /bitnami/kafka/data
+  #   volumes:
+  #     - ./kafka_data:/bitnami/kafka
+  #   depends_on:
+  #     - zookeeper
+    
   kafka:
-    image: bitnami/kafka
+    image: bitnami/kafka:latest
     hostname: kafka
     ports:
       - "9091:9091"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_CFG_LISTENERS: INTERNAL://kafka:19091,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9091
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19091,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9091
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
       KAFKA_CFG_NODE_ID: 1
-      KAFKA_ENABLE_KRAFT: yes
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "main-topic:1:1"
-      KAFKA_CFG_PROCESS_ROLES: broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9091,CONTROLLER://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9091
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_LOG_DIRS: /bitnami/kafka/data
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CLUSTER_ID: i7DivAfCTKC58UAp_FIfcQ
     volumes:
-      - ./data/kafka1/data:/var/lib/kafka/data
-    depends_on:
-      - zookeeper
-    
+      - ./kafka_data:/bitnami/kafka
+
   kafdrop:
     image: obsidiandynamics/kafdrop
     restart: "no"
     ports:
       - "9000:9000"
     environment:
-      KAFKA_BROKERCONNECT: "kafka:19091"
+      KAFKA_BROKERCONNECT: "kafka:9091"
     depends_on:
       - kafka
 
@@ -106,7 +125,6 @@ services:
       - .env
     depends_on:
       - pg
-      - zookeeper
       - kafka
 
   email:
@@ -120,6 +138,5 @@ services:
       - .env
     depends_on:
       - pg
-      - zookeeper
       - kafka
 

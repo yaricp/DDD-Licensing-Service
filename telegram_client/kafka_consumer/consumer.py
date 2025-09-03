@@ -14,18 +14,18 @@ from telegram.telegram_bot import TelegramBot
 
 from protobuf_types.UserEvents_pb2 import UserEvent
 from protobuf_types.TypeMessage_pb2 import TypeMessage
-from protobuf_types.PartnerEvents_pb2 import PartnerEvent
-from protobuf_types.AttractionEvents_pb2 import AttractionEvent
+from protobuf_types.TenantEvents_pb2 import TenantEvent
 from protobuf_types.LicenseEvents_pb2 import LicenseEvent
+from protobuf_types.SubdivisionEvents_pb2 import SubdivisionEvent
 from protobuf_types.StatisticRowEvents_pb2 import StatisticRowEvent
 from settings import main_config
 
 
 protobuf_types = {
     "UserEvent": UserEvent,
-    "PartnerEvent": PartnerEvent,
+    "TenantEvent": TenantEvent,
     "LicenseEvent": LicenseEvent,
-    "AttractionEvent": AttractionEvent,
+    "SubdivisionEvent": SubdivisionEvent,
     "StatisticRowEvent": StatisticRowEvent
 }
 
@@ -57,7 +57,7 @@ class TelegramKafkaConsumer:
             self.logger.info(f"event_obj_dict: {event_obj_dict}")
             if "action" not in event_obj_dict:
                 event_obj_dict.update({"action": "CREATED"})
-            
+
         except Exception as err:
             self.logger.error(f"Error: {err}")
         return event_obj_dict

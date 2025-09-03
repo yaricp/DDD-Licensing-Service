@@ -12,10 +12,10 @@ message LicenseEvent {
     string name = 2;
     string description = 3;
     string type = 4;
-    string attraction_id = 5;
-    string partner_id = 6;
+    string subdivision_id = 5;
+    string tenant_id = 6;
     string status = 7;
-    int32 count_packages = 8;
+    int32 count_requests = 8;
     google.protobuf.Timestamp activated = 9;
     google.protobuf.Timestamp expirated = 10;
     google.protobuf.Timestamp created = 11;

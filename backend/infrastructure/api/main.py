@@ -18,9 +18,9 @@ from backend.licensing_service.api.v1.routers import (
 from backend.licensing_service.infra.adapters.orm import (
     start_mappers as start_tenants_mappers
 )
-# from backend.licensing_service.infra.adapters.kafka_adapter import (
-#     create_topics
-# )
+from backend.licensing_service.infra.adapters.kafka_adapter import (
+    create_topics
+)
 
 
 @asynccontextmanager
@@ -36,7 +36,7 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator:
 
     start_tenants_mappers()
     # topics=KAFKA_TOPICS, kafka_servers=KAFKA_SERVERS
-    # create_topics()
+    create_topics()
 
     yield
 

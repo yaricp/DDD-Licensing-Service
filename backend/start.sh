@@ -9,6 +9,8 @@ echo "start generate all protobuf types"
 scripts/protobuf/./generate_all_protobuf_types.sh
 echo "finished generate all protobuf types"
 
+sleep 30
+
 if [[ -z "${HOST}" ]]; then
   HOST="0.0.0.0"
 else

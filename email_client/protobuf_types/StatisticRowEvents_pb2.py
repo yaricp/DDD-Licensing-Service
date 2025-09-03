@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x18StatisticRowEvents.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8e\x01\n\x11StatisticRowEvent\x12\x11\n\ttype_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12+\n\x07\x63reated\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x16\n\x0e\x63ount_packages\x18\x04 \x01(\x05\x12\x15\n\rattraction_id\x18\x05 \x01(\tb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x18StatisticRowEvents.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8f\x01\n\x11StatisticRowEvent\x12\x11\n\ttype_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12+\n\x07\x63reated\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x16\n\x0e\x63ount_requests\x18\x04 \x01(\x05\x12\x16\n\x0esubdivision_id\x18\x05 \x01(\tb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'StatisticRowEvents_pb2', globals())
@@ -22,5 +22,5 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _STATISTICROWEVENT._serialized_start=62
-  _STATISTICROWEVENT._serialized_end=204
+  _STATISTICROWEVENT._serialized_end=205
 # @@protoc_insertion_point(module_scope)

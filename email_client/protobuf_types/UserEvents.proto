@@ -11,7 +11,7 @@ message UserEvent {
     string tg_id = 3;
     string user_id = 4;
     bool superadmin = 5;
-    string partner_id = 6;
-    string attraction_id = 7;
+    string tenant_id = 6;
+    string subdivision_id = 7;
     Action action = 8;
 }

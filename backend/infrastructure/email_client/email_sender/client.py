@@ -5,7 +5,6 @@ from email.mime.text import MIMEText
 from settings import main_config
 
 
-
 class MailMessage:
     """A class for creating and send Gmail message.
 

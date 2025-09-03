@@ -16,7 +16,10 @@ RUN poetry install
 
 WORKDIR /
 
+RUN mkdir -p /protobuf_types
+
 COPY / /telegram_client
+COPY /protobuf_types /protobuf_types
 COPY /scripts /scripts
 COPY start.sh /
 
