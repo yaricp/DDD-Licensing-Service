@@ -165,7 +165,8 @@ class Subdivision(AbstractAggregateRoot):
             )
 
     async def save_day_statistic(
-        self, stat_row: StatisticRow, eventbus: AbstractEventBus | None
+        self, stat_row: StatisticRow,
+        eventbus: AbstractEventBus | None
     ):
         print(f"stat_row: {stat_row}")
         if not self.active_license:

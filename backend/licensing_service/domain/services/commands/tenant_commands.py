@@ -6,7 +6,7 @@ from backend.core.infra.commands import AbstractCommand
 
 @dataclass(frozen=True)
 class CreateTenantCommand(AbstractCommand):
-    user_id: str
+    user_id: UUID
     name: str
     address: str
     email: str

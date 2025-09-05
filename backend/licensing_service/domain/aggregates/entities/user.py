@@ -1,3 +1,4 @@
+from __future__ import annotations
 from uuid import UUID
 from typing import Optional
 from dataclasses import dataclass
@@ -20,3 +21,7 @@ class User(AbstractEntity):
 
     def demote_from_super_admin(self):
         self.superadmin = False
+
+    @classmethod
+    def make(cls, user_id: UUID) -> User:
+        return cls(user_id=user_id)

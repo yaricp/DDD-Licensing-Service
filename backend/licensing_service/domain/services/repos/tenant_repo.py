@@ -28,5 +28,9 @@ class TenantRepository(AbstractRepository, ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def save(self, tenant: AbstractEntity) -> Tenant:
+        raise NotImplementedError
+
+    @abstractmethod
     async def list(self) -> List[Tenant]:
         raise NotImplementedError

@@ -43,14 +43,13 @@ class TenantService:
     ) -> Optional[Tenant]:
         async with self._uow as uow:
             tenant = Tenant.make(
-                create_command.name, create_command.email,
-                create_command.address, create_command.phone
+                user_id=create_command.user_id,
+                name=create_command.name, email=create_command.email,
+                address=create_command.address, phone=create_command.phone
             )
-            created_tenant = await uow.tenants.add(
-                model=tenant
+            created_tenant = await uow.tenants.save(
+                tenant=tenant
             )
-            new_user = CreateUserCommand(user_id=create_command.user_id)
-            tenant.add_user(user=new_user)
             await uow.commit()
             tenant = await self.get_tenant_by_id(
                 id=created_tenant.id
@@ -72,7 +71,7 @@ class TenantService:
             tenants: List[Tenant] = await uow.tenants.list()
             return tenants
 
-    async def get_tenant_by_id(self, id: UUID) -> Tenant:
+    async def get_tenant_by_id(self, id: UUID | None) -> Tenant:
         async with self._uow as uow:
             tenant: Optional[Tenant] = await uow.tenants.get(id=id)
             if not tenant:

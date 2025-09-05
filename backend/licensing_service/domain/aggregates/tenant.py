@@ -35,19 +35,15 @@ class Tenant(AbstractAggregateRoot):
         self.email = email
         self.phone = phone
 
-    # def pull_events(self) -> List[object]:
-    #     events = self._domain_events
-    #     self._domain_events = []
-    #     return events
-
     @classmethod
     def make(
-        cls, name: str, address: str, email: str, phone: str
+        cls, user_id: UUID, name: str, address: str, email: str, phone: str
     ) -> Tenant:
         print("Factory method")
+        user = User.make(user_id)
         return cls(
             name=name, address=address, email=email, phone=phone,
-            users=[], subdivisions=[]
+            users=[user], subdivisions=[]
         )
 
     @classmethod
@@ -60,7 +56,3 @@ class Tenant(AbstractAggregateRoot):
             id=id, name=name, address=address, email=email, phone=phone,
             users=users, subdivisions=subdivisions
         )
-
-    def add_user(self, user: CreateUserCommand) -> None:
-        "Adding user for current Tenant"
-        print("Adding user for current Tenant")

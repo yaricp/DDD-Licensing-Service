@@ -98,6 +98,12 @@ class SQLAlchemyTenantRepository(
         )
         return result.scalar_one()
 
+    async def save(self, tenant: Tenant) -> Subdivision:
+        print(f"tenant: {tenant}")
+        new_tenant = await self._session.merge(tenant)
+        print(f"new_tenant: {new_tenant}")
+        return new_tenant
+
     async def list(self) -> List[Tenant]:
         """
         Returning result object instead of converting to new objects by

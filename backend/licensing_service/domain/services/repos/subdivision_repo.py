@@ -34,6 +34,12 @@ class SubdivisionRepository(AbstractRepository, ABC):
         self, id: UUID, model: AbstractEntity
     ) -> Subdivision:
         raise NotImplementedError
+    
+    @abstractmethod
+    async def save(
+        self, model: AbstractEntity
+    ) -> Subdivision:
+        raise NotImplementedError
 
     @abstractmethod
     async def delete(self, id: UUID) -> Subdivision:
