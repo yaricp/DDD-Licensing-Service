@@ -11,7 +11,7 @@ from backend.licensing_service.domain.value_objects.license_type import LicenseT
 class FakeEventBus(AbstractEventBus):
     """Fake Event bus for tests"""
     def add_event(self, event: AbstractEvent):
-        print(f"Event addded: {event}")
+        print(f"Event added: {event}")
 
 
 def test_license_deactivation_when_limit_reached():

@@ -5,7 +5,7 @@ services:
     container_name: api
     image: api
     build:
-      context: ./backend
+      context: ./src/backend
       dockerfile: Dockerfile
     entrypoint: ./start.sh
     env_file:
@@ -16,7 +16,7 @@ services:
       - pg
       - kafka
     volumes:
-      - ./backend/alembic/versions:/alembic/versions
+      - ./src/backend/alembic/versions:/alembic/versions
 
   # redis:
   #   image: redis:latest
@@ -102,7 +102,7 @@ services:
       ALLOW_PLAINTEXT_LISTENER: yes
       KAFKA_CLUSTER_ID: i7DivAfCTKC58UAp_FIfcQ
     volumes:
-      - ./kafka_data:/bitnami/kafka
+      - ./src/kafka_data:/bitnami/kafka
 
   kafdrop:
     image: obsidiandynamics/kafdrop
@@ -118,7 +118,7 @@ services:
     container_name: tg
     image: tg
     build:
-      context: ./telegram_client
+      context: ./src/telegram_client
       dockerfile: Dockerfile
     entrypoint: ./start.sh
     env_file:
@@ -131,7 +131,7 @@ services:
     container_name: email
     image: email
     build:
-      context: ./email_client
+      context: ./src/email_client
       dockerfile: Dockerfile
     entrypoint: ./start.sh
     env_file:
