@@ -11,14 +11,14 @@ from backend.core.infra.database.metadata import metadata
 
 from .config import cors_config
 
-from backend.licensing_service.api.v1.routers import (
+from backend.domains.licensing_service.api.v1.routers import (
     api_router as licensing_service_router
 )
 
-from backend.licensing_service.infra.adapters.orm import (
+from backend.domains.licensing_service.infra.adapters.orm import (
     start_mappers as start_tenants_mappers
 )
-from backend.licensing_service.infra.adapters.kafka_adapter import (
+from backend.domains.licensing_service.infra.adapters.kafka_adapter import (
     create_topics
 )
 
