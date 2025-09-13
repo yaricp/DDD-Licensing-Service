@@ -2,13 +2,13 @@ services:
   api:
     # entrypoint: [ "/bin/bash", "-l", "-c" ]
     volumes:
-      - ./backend:/backend
-      - ./alembic/versions:/alembic/versions
+      - ./src/backend:/backend
+      - ./src/backend/alembic/versions:/alembic/versions
   tg:
     # entrypoint: [ "/bin/bash", "-l", "-c" ]
     volumes:
-      - ./telegram_client:/telegram_client
+      - ./src/telegram_client:/telegram_client
   email:
     # entrypoint: [ "/bin/bash", "-l", "-c" ]
     volumes:
-      - ./email_client:/email_client
+      - ./src/email_client:/email_client

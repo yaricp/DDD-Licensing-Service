@@ -1,3 +1,8 @@
+src/email_channel/protobuf_types/
+src/telegram_channel/protobuf_types/
+src/backend/protobuf_types/
+
+
 **alembic/versions
 kafka_data/
 data/
