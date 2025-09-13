@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+message StatisticRowEvent{
+    string type_name = 1;
+    string id = 2;
+    google.protobuf.Timestamp created = 3;
+    int32 count_requests = 4;
+    string subdivision_id = 5;
+}
