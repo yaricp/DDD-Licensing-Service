@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /protobuf_types/
+cd /telegram_client/protobuf_types/
 protoc --python_out=. *.proto

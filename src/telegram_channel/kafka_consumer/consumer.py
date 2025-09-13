@@ -78,7 +78,8 @@ class TelegramKafkaConsumer:
                 for message in self.__consumer:
                     if message is not None:
                         self.logger.info(
-                            f"offset: {message.offset}, message: {message.value}"
+                            f"offset: {message.offset}, "
+                            f"message: {message.value}"
                         )
                         self.on_kafka_event(message.value)
         finally:

@@ -12,8 +12,8 @@ from google.protobuf.json_format import MessageToDict
 
 from protobuf_types.UserEvents_pb2 import UserEvent
 from protobuf_types.TypeMessage_pb2 import TypeMessage
-from protobuf_types.PartnerEvents_pb2 import PartnerEvent
-from protobuf_types.AttractionEvents_pb2 import AttractionEvent
+from protobuf_types.TenantEvents_pb2 import TenantEvent
+from protobuf_types.SubdivisionEvents_pb2 import SubdivisionEvent
 from protobuf_types.LicenseEvents_pb2 import LicenseEvent
 from protobuf_types.StatisticRowEvents_pb2 import StatisticRowEvent
 
@@ -24,9 +24,9 @@ from template_renderer import TemplateRenderer
 
 protobuf_types = {
     "UserEvent": UserEvent,
-    "PartnerEvent": PartnerEvent,
+    "TenantEvent": TenantEvent,
     "LicenseEvent": LicenseEvent,
-    "AttractionEvent": AttractionEvent,
+    "SubdivisionEvent": SubdivisionEvent,
     "StatisticRowEvent": StatisticRowEvent
 }
 
@@ -116,7 +116,8 @@ class EmailKafkaConsumer:
                 for message in self.__consumer:
                     if message is not None:
                         self.logger.info(
-                            f"offset: {message.offset}, message: {message.value}"
+                            f"offset: {message.offset}, "
+                            f"message: {message.value}"
                         )
                         self.on_kafka_event(message.value)
         finally:
