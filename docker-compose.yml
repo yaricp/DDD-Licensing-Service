@@ -70,7 +70,7 @@ services:
     container_name: tg
     image: tg
     build:
-      context: ./src/telegram_client
+      context: ./src/telegram_channel
       dockerfile: Dockerfile
     entrypoint: ./start.sh
     env_file:
@@ -83,7 +83,7 @@ services:
     container_name: email
     image: email
     build:
-      context: ./src/email_client
+      context: ./src/email_channel
       dockerfile: Dockerfile
     entrypoint: ./start.sh
     env_file:

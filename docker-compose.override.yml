@@ -7,8 +7,8 @@ services:
   tg:
     # entrypoint: [ "/bin/bash", "-l", "-c" ]
     volumes:
-      - ./src/telegram_client:/telegram_client
+      - ./src/telegram_channel:/telegram_client
   email:
     # entrypoint: [ "/bin/bash", "-l", "-c" ]
     volumes:
-      - ./src/email_client:/email_client
+      - ./src/email_channel:/email_client
