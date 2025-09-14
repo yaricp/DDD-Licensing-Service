@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Any
 
 # ---Domain imports---
 from ...domain.aggregates.entities.user import User
@@ -27,11 +28,17 @@ class UserService:
     def __init__(
         self,
         domain_event_bus: DomainEventBus | None = None,
-        infra_event_bus: DomainEventBus | None = None
+        infra_event_bus: DomainEventBus | None = None,
+        db_session_factory: Any | None = None
     ) -> None:
         self._domain_event_bus = domain_event_bus
         self._infra_event_bus = infra_event_bus
-        self._uow: UserUnitOfWork = UOW()
+        if db_session_factory:
+            self._uow: UserUnitOfWork = UOW(
+                session_factory=db_session_factory
+            )
+        else:
+            self._uow: UserUnitOfWork = UOW()
 
     async def create_user(self, model: User) -> User:
         async with self._uow as uow:

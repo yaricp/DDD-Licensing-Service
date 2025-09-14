@@ -19,6 +19,7 @@ class SQLAlchemyAbstractUnitOfWork(AbstractUnitOfWork):
     ) -> None:
         super().__init__()
         self._session_factory: async_sessionmaker = session_factory
+        print(f"type(self._session_factory): {type(self._session_factory)}")
 
     async def __aenter__(self) -> Self:
         self._session: AsyncSession = self._session_factory()

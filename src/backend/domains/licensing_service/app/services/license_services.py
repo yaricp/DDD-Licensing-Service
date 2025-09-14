@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import Optional
+from typing import Optional, Any
 
 # ---Domain imports---
 from ...domain.aggregates.entities.license import License
@@ -30,11 +30,17 @@ class LicenseService:
     def __init__(
         self,
         domain_event_bus: DomainEventBus | None = None,
-        infra_event_bus: DomainEventBus | None = None
+        infra_event_bus: DomainEventBus | None = None,
+        db_session_factory: Any | None = None
     ) -> None:
         self._domain_event_bus = domain_event_bus
         self._infra_event_bus = infra_event_bus
-        self._uow: LicenseUnitOfWork = UOW()
+        if db_session_factory:
+            self._uow: LicenseUnitOfWork = UOW(
+                session_factory=db_session_factory
+            )
+        else:
+            self._uow: LicenseUnitOfWork = UOW()
 
     async def create_license(
         self, create_command: CreateLicenseCommand

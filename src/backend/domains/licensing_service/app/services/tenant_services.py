@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import Optional, List
+from typing import Optional, List, Any
 
 # ---Domain imports---
 from ...domain.aggregates.tenant import Tenant
@@ -32,11 +32,17 @@ class TenantService:
     def __init__(
         self,
         domain_event_bus: DomainEventBus | None = None,
-        infra_event_bus: DomainEventBus | None = None
+        infra_event_bus: DomainEventBus | None = None,
+        db_session_factory: Any | None = None
     ) -> None:
         self._domain_event_bus = domain_event_bus
         self._infra_event_bus = infra_event_bus
-        self._uow: TenantUnitOfWork = UOW()
+        if db_session_factory:
+            self._uow: TenantUnitOfWork = UOW(
+                session_factory=db_session_factory
+            )
+        else:
+            self._uow: TenantUnitOfWork = UOW()
 
     async def create_tenant(
         self, create_command: CreateTenantCommand

@@ -51,16 +51,16 @@ class Subdivision(AbstractAggregateRoot):
     def add_license(
         self, name: str, description: str, type: LicenseType,
         count_requests: int, subdivision_id: UUID
-    ) -> License:
+    ) -> None:
         new_license = License.make(
             name=name, description=description, type=type,
-            subdivision_id=self.id, count_requests=count_requests
+            subdivision_id=subdivision_id, count_requests=count_requests
         )
         self.licenses.append(new_license)
 
     def update_license(
         self, id: UUID, name: str, description: str
-    ) -> License:
+    ) -> None:
         filtered_licenses = list(filter(
             lambda x: x.id == id, self.licenses
         ))
@@ -71,7 +71,7 @@ class Subdivision(AbstractAggregateRoot):
         new_license.name = name
         new_license.description = description
 
-    def delete_license(self, id: UUID) -> License:
+    def delete_license(self, id: UUID) -> None:
         filtered_licenses: List[License] = list(filter(
             lambda x: x.id == id, self.licenses
         ))
@@ -82,11 +82,6 @@ class Subdivision(AbstractAggregateRoot):
             current_license.deactivate()
             self.deactivate()
         self.licenses.remove(current_license)
-
-    # def pull_events(self) -> List[object]:
-    #     events = self._domain_events
-    #     self._domain_events = []
-    #     return events
 
     def activate(self):
         self.work_status = WorkStatus.ACTIVE
@@ -217,7 +212,6 @@ class Subdivision(AbstractAggregateRoot):
         work_status: WorkStatus, link_to_subdivision_processing_domain: str,
         licenses: list, statistics: list
     ) -> Subdivision:
-        print("from DB")
         return cls(
             id=id, name=name, location=location,
             tenant_id=tenant_id, work_status=work_status,

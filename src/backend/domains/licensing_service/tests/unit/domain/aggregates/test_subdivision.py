@@ -2,10 +2,10 @@ from uuid import uuid4
 
 from backend.core.infra.eventbus import AbstractEventBus, AbstractEvent
 
-from backend.licensing_service.domain.aggregates.subdivision import Subdivision
-from backend.licensing_service.domain.aggregates.entities.license import License
-from backend.licensing_service.domain.aggregates.entities.stat_row import StatisticRow
-from backend.licensing_service.domain.value_objects.license_type import LicenseType
+from backend.domains.licensing_service.domain.aggregates.subdivision import Subdivision
+from backend.domains.licensing_service.domain.aggregates.entities.license import License
+from backend.domains.licensing_service.domain.aggregates.entities.stat_row import StatisticRow
+from backend.domains.licensing_service.domain.value_objects.license_type import LicenseType
 
 
 class FakeEventBus(AbstractEventBus):

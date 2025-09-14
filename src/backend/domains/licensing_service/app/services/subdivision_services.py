@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import Optional, List
+from typing import Optional, List, Any
 
 # ---Domain imports---
 from ...domain.aggregates.subdivision import Subdivision
@@ -44,11 +44,17 @@ class SubdivisionService:
     def __init__(
         self,
         domain_event_bus: DomainEventBus | None = None,
-        infra_event_bus: DomainEventBus | None = None
+        infra_event_bus: DomainEventBus | None = None,
+        db_session_factory: Any | None = None
     ) -> None:
         self._domain_event_bus = domain_event_bus
         self._infra_event_bus = infra_event_bus
-        self._uow: SubdivisionUnitOfWork = UOW()
+        if db_session_factory:
+            self._uow: SubdivisionUnitOfWork = UOW(
+                session_factory=db_session_factory
+            )
+        else:
+            self._uow: SubdivisionUnitOfWork = UOW()
 
     async def activate_subdivision_license(
         self, subdivision_id: UUID, license_id: UUID
@@ -100,9 +106,8 @@ class SubdivisionService:
             subdivision.add_license(
                  **await add_license_command.to_dict()
             )
-            new_sub = await uow.subdivisions.save(subdivision)
+            await uow.subdivisions.save(subdivision)
             await uow.commit()
-            print(f"new_sub: {new_sub}")
             subdivision = await self.get_subdivision_by_id(
                 id=add_license_command.subdivision_id
             )
