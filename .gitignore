@@ -2,8 +2,7 @@ src/email_channel/protobuf_types/
 src/telegram_channel/protobuf_types/
 src/backend/domains/licensing_service/infra/protobuf_types/
 
-
-**alembic/versions
+src/backend/infrastructure/alembic/versions
 kafka_data/
 data/
 # Byte-compiled / optimized / DLL files

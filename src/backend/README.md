@@ -15,8 +15,8 @@ backend/
 │       ├── infra/          # Infrastructure (repositories, adapters)
 │       └── tests/          # Unit and integration tests
 ├── infrastructure/         # Shared infrastructure for all domains
-│   ├── database/           # SQLAlchemy, Alembic migrations
-│   ├── kafka/              # Kafka configuration
+│   ├── alembic/            # Alembic migrations
+│   ├── rest_api/           # RestAPI for all domains
 │   └── ...
 ├── config.py               # Global configuration
 ├── main.py                 # FastAPI entry point

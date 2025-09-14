@@ -42,7 +42,7 @@ else
 fi
 
 if [ "$RELOAD" = true ]; then
-  poetry run uvicorn backend.infrastructure.api.main:app --workers $WORKERS --host $HOST --port $PORT --log-level $LOG_LEVEL --reload
+  poetry run uvicorn backend.infrastructure.rest_api.main:app --workers $WORKERS --host $HOST --port $PORT --log-level $LOG_LEVEL --reload
 else
-  poetry run uvicorn backend.infrastructure.api.main:app --workers $WORKERS --host $HOST --port $PORT --log-level $LOG_LEVEL
+  poetry run uvicorn backend.infrastructure.rest_api.main:app --workers $WORKERS --host $HOST --port $PORT --log-level $LOG_LEVEL
 fi

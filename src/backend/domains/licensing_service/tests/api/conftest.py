@@ -4,7 +4,7 @@ import asyncio
 import pytest
 from httpx import AsyncClient, ASGITransport
 from asgi_lifespan import LifespanManager
-from infrastructure.api.main import app
+from infrastructure.rest_api.main import app
 from core.infra.database.connection import engine as async_engine
 from licensing_service.api.v1.routers import prefix
 
