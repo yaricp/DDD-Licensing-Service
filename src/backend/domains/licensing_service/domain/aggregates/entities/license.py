@@ -1,5 +1,5 @@
 from __future__ import annotations
-from uuid import UUID
+from uuid import UUID, uuid4
 from typing import Optional
 from datetime import datetime, timedelta
 from dataclasses import dataclass
@@ -56,6 +56,7 @@ class License(AbstractEntity):
         subdivision_id: UUID, count_requests: int
     ) -> License:
         return cls(
+            id=uuid4(),
             name=name, description=description,
             type=type, subdivision_id=subdivision_id,
             count_requests=count_requests,

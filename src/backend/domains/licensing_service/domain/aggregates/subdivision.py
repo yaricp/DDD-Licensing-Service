@@ -1,5 +1,5 @@
 from __future__ import annotations
-from uuid import UUID
+from uuid import UUID, uuid4
 from typing import List, Optional
 from dataclasses import dataclass, field
 
@@ -11,7 +11,7 @@ from .entities.stat_row import StatisticRow
 from ..exceptions.subdivision import SubdivisionInactiveError
 from ..exceptions.license import (
     LicenseExpiredError, LicenseInactiveError, LicenseAlreadyInUseError,
-    LicenseWrongTenantError
+    LicenseWrongTenantError, LicenseNotFoundError
 )
 from ..exceptions.statistic_row import (
     SubdivisionStatisticAlreadyExistsError
@@ -60,24 +60,29 @@ class Subdivision(AbstractAggregateRoot):
         return new_license
 
     def update_license(
-        self, id: UUID, name: str, description: str
+        self, id: UUID, name: str,
+        description: str,
+        type: LicenseType = LicenseType.BYTIME,
+        count_requests: int = 0
     ) -> None:
         filtered_licenses = list(filter(
             lambda x: x.id == id, self.licenses
         ))
         if not filtered_licenses:
-            raise LicenseWrongTenantError
+            raise LicenseNotFoundError
 
         new_license = filtered_licenses[0]
         new_license.name = name
         new_license.description = description
+        new_license.type = type
+        new_license.count_requests = count_requests
 
     def delete_license(self, id: UUID) -> None:
         filtered_licenses: List[License] = list(filter(
             lambda x: x.id == id, self.licenses
         ))
         if not filtered_licenses:
-            raise LicenseWrongTenantError
+            raise LicenseNotFoundError
         current_license = filtered_licenses[0]
         if current_license.is_active:
             current_license.deactivate()
@@ -121,13 +126,16 @@ class Subdivision(AbstractAggregateRoot):
     async def activate_license(
         self, license_id: UUID, eventbus: AbstractEventBus | None
     ) -> None:
-        print("activate_license started")
+        print("Activate_license started")
+        print(f"self.licenses: {self.licenses}")
+        print(f"license_id: {license_id}")
         filtered_license: Optional[License] = list(filter(
             lambda x: x.id == license_id,
             self.licenses
         ))
+        print(f"filtered_license: {filtered_license}")
         if not filtered_license:
-            raise FileNotFoundError
+            raise LicenseNotFoundError
         license = filtered_license[0]
         license.activate()
         license.check(self.total_count_requests)
@@ -149,7 +157,7 @@ class Subdivision(AbstractAggregateRoot):
             self.licenses
         ))
         if not filtered_license:
-            raise FileNotFoundError
+            raise LicenseNotFoundError
         license = filtered_license[0]
         license.deactivate()
         self.deactivate()
@@ -165,10 +173,10 @@ class Subdivision(AbstractAggregateRoot):
         eventbus: AbstractEventBus | None
     ):
         print(f"stat_row: {stat_row}")
-        if not self.active_license:
-            raise LicenseInactiveError
         if not self.is_active:
             raise SubdivisionInactiveError
+        if not self.active_license:
+            raise LicenseInactiveError
         if stat_row in self.statistics:
             raise SubdivisionStatisticAlreadyExistsError
         print(f"type(stat_row): {type(stat_row)}")
@@ -201,6 +209,7 @@ class Subdivision(AbstractAggregateRoot):
         cls, name: str, location: str, tenant_id: UUID
     ) -> Subdivision:
         return cls(
+            id=uuid4(),
             name=name, location=location, tenant_id=tenant_id,
             licenses=[],
             statistics=[],

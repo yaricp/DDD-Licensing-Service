@@ -417,7 +417,9 @@ async def test_update_license_in_subdivision(db_session):
         subdivision_id=subdivision.id,
     )
 
-    updated_subdivision = await subdivision_service.update_license(update_license_cmd)
+    updated_subdivision = await subdivision_service.update_license(
+        update_license_cmd
+    )
 
     assert updated_subdivision is not None
     assert len(updated_subdivision.licenses) == 1
@@ -642,7 +644,7 @@ async def test_add_statistic_row_to_subdivision_without_license(db_session):
     stats_cmd = AddStatisticRowCommand(
         created=datetime.now(), count_requests=100, subdivision_id=subdivision.id
     )
-    with pytest.raises(LicenseInactiveError):
+    with pytest.raises(SubdivisionInactiveError):
         await subdivision_service.add_subdivision_statistic_row(stats_cmd)
 
     # assert updated_subdivision is not None
