@@ -30,6 +30,18 @@ pytest = "^8.4.1"
 httpx = "^0.28.1"
 pytest-asyncio = "^1.1.0"
 asgi-lifespan = "^2.1.0"
+pytest-postgresql = "^7.0.2"
+flake8 = "^7.3.0"
+ruff = "^0.13.0"
+isort = "^6.0.1"
+black = "^25.1.0"
+
+
+[tool.poetry.group.test.dependencies]
+flake8 = "^7.3.0"
+ruff = "^0.13.0"
+isort = "^6.0.1"
+black = "^25.1.0"
 
 [tool.mypy]
 plugins = ['pydantic.mypy']
@@ -57,3 +69,32 @@ disable_error_code = ["misc"]
 [tool.pytest.ini_options]
 pythonpath = ["backend"]
 testpaths = ['tests',]
+asyncio_mode = "auto"
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+skip-string-normalization = false
+
+[tool.isort]
+profile = "black"
+line_length = 88
+combine_as_imports = true
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.flake8]
+max-line-length = 88
+# Игнорируем правила, конфликтующие с Black
+extend-ignore = [
+    "E203",  # Whitespace before ':' (Black форматирует по-своему)
+    "W503",  # Line break before binary operator (Black делает наоборот)
+]
+max-complexity = 10
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "alembic",
+    "tests/*",  # если не хочешь ругани на тестовые ассерт-стили
+]

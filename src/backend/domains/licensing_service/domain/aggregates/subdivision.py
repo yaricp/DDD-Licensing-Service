@@ -51,12 +51,13 @@ class Subdivision(AbstractAggregateRoot):
     def add_license(
         self, name: str, description: str, type: LicenseType,
         count_requests: int, subdivision_id: UUID
-    ) -> None:
+    ) -> License:
         new_license = License.make(
             name=name, description=description, type=type,
             subdivision_id=subdivision_id, count_requests=count_requests
         )
         self.licenses.append(new_license)
+        return new_license
 
     def update_license(
         self, id: UUID, name: str, description: str

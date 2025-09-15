@@ -6,7 +6,10 @@ from ...domain.aggregates.subdivision import Subdivision
 from ...domain.aggregates.entities.license import License
 from ...domain.aggregates.entities.stat_row import StatisticRow
 from ...domain.services.domain_event_bus import DomainEventBus
-from ...domain.services.events.license_events import LicenseActivatedEvent
+from ...domain.services.events.license_events import (
+    LicenseActivatedEvent, LicenseCreatedEvent, LicenseDeactivatedEvent,
+    LicenseDeletedEvent
+)
 from ...domain.services.events.subdivision_events import (
     SubdivisionCreatedEvent, SubdivisionUpdatedEvent,
     SubdivisionDeletedEvent, SubdivisionLicenseExpiredEvent
@@ -68,11 +71,16 @@ class SubdivisionService:
                     license_id, self._domain_event_bus
                 )
                 await uow.subdivisions.save(subdivision)
+                license = list(filter(
+                    lambda x: x.id == license_id,
+                    subdivision.licenses
+                ))[0]
             await uow.commit()
-            # if self._infra_event_bus:
-            #     self._infra_event_bus.add_event(
-            #         LicenseActivatedEvent(**await license.to_dict())
-            #     )
+            
+            if self._infra_event_bus:
+                self._infra_event_bus.add_event(
+                    LicenseActivatedEvent(**await license.to_dict())
+                )
             return subdivision
 
     async def deactivate_subdivision_license(
@@ -87,11 +95,15 @@ class SubdivisionService:
                     license_id, self._domain_event_bus
                 )
                 await uow.subdivisions.save(subdivision)
+                license = list(filter(
+                    lambda x: x.id == license_id,
+                    subdivision.licenses
+                ))[0]
             await uow.commit()
-            # if self._infra_event_bus:
-            #     self._infra_event_bus.add_event(
-            #         LicenseActivatedEvent(**await license.to_dict())
-            #     )
+            if self._infra_event_bus:
+                self._infra_event_bus.add_event(
+                    LicenseDeactivatedEvent(**await license.to_dict())
+                )
             return subdivision
 
     async def add_license(
@@ -103,7 +115,7 @@ class SubdivisionService:
             )
             if not subdivision:
                 raise SubdivisionNotFoundError
-            subdivision.add_license(
+            license = subdivision.add_license(
                  **await add_license_command.to_dict()
             )
             await uow.subdivisions.save(subdivision)
@@ -111,6 +123,10 @@ class SubdivisionService:
             subdivision = await self.get_subdivision_by_id(
                 id=add_license_command.subdivision_id
             )
+            if self._infra_event_bus:
+                self._infra_event_bus.add_event(
+                    LicenseCreatedEvent(**await license.to_dict())
+                )
             return subdivision
 
     async def update_license(

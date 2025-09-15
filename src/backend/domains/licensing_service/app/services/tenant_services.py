@@ -61,15 +61,15 @@ class TenantService:
                 id=created_tenant.id
             )
             if self._infra_event_bus:
-                self._infra_event_bus.add_event(
-                    TenantCreatedEvent(
-                        id=tenant.id,
-                        name=tenant.name,
-                        address=tenant.address,
-                        email=tenant.email,
-                        phone=tenant.phone
-                    )
+                event_tenant_created = TenantCreatedEvent(
+                    id=tenant.id,
+                    name=tenant.name,
+                    address=tenant.address,
+                    email=tenant.email,
+                    phone=tenant.phone
                 )
+                print(f"added a new event: {event_tenant_created}")
+                self._infra_event_bus.add_event(event_tenant_created)
             return tenant
 
     async def get_all_tenants(self) -> List[Tenant]:

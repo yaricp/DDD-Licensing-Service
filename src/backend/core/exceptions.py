@@ -9,7 +9,9 @@ class DetailedHTTPException(HTTPException):
     DETAIL: str = ErrorDetails.SERVER_ERROR
 
     def __init__(self, **kwargs: dict[str, Any]) -> None:
-        super().__init__(status_code=self.STATUS_CODE, detail=self.DETAIL, **kwargs)
+        super().__init__(
+            status_code=self.STATUS_CODE, detail=self.DETAIL, **kwargs
+        )
 
 
 class PermissionDeniedError(DetailedHTTPException):

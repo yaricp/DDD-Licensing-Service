@@ -98,11 +98,13 @@ users_table = Table(
 
 def start_mappers():
     """
-    Map all domain models to ORM models, for purpose of using domain models directly during work with the database,
+    Map all domain models to ORM models,
+    for purpose of using domain models directly during work with the database,
     according to DDD.
     """
-
-    # Imports here not to ruin alembic logics. Also, only for mappers they needed:
+    print("Start Mapper")
+    # Imports here not to ruin alembic logics.
+    # Also, only for mappers they needed:
     from ...domain.aggregates.tenant import (
         Tenant
     )
@@ -185,3 +187,4 @@ def start_mappers():
             )
         }
     )
+    print("Finish Mapper")
