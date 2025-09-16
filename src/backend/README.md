@@ -30,7 +30,7 @@ backend/
 - **DDD layers**:  
   - [domain/](./domains/licensing_service/domain/README.md) contains pure business logic.  
   - [app/](./domains/licensing_service/app/README.md) contains use cases (application services).  
-  - `infra/` implements persistence and integration.  
+  - [infra/](./domains/licensing_service/infra/README.md) implements persistence and integration.  
 
 
 ---
