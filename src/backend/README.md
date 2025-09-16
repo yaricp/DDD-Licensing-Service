@@ -29,7 +29,7 @@ backend/
 - **Shared infrastructure**: cross-domain components (database, messaging, monitoring, etc.) live in `infrastructure/`.  
 - **DDD layers**:  
   - `domain/` contains pure business logic.  
-  - `app/` contains use cases (application services).  
+  - [app/](./domains/licensing_service/app/README.md) contains use cases (application services).  
   - `infra/` implements persistence and integration.  
 
 
