@@ -1,21 +1,15 @@
-from uuid import UUID
 from typing import Any
+from uuid import UUID
 
 # ---Domain imports---
 from ...domain.aggregates.entities.user import User
 from ...domain.services.domain_event_bus import DomainEventBus
-from ...domain.services.events.user_events import (
-    UserCreatedEvent, UserUpdatedEvent
-)
+from ...domain.services.events.user_events import UserCreatedEvent, UserUpdatedEvent
 from ...domain.services.uow.user_uow import UserUnitOfWork
+from ...infra.adapters.user_domain_client import Client as UserDomainClient
 
 # ---Infrastructure imports---
-from ...infra.uow.sqlalchemy.user_uow import (
-    SQLAlchemyUserUnitOfWork as UOW
-)
-from ...infra.adapters.user_domain_client import (
-    Client as UserDomainClient
-)
+from ...infra.uow.sqlalchemy.user_uow import SQLAlchemyUserUnitOfWork as UOW
 
 
 class UserService:
@@ -29,14 +23,12 @@ class UserService:
         self,
         domain_event_bus: DomainEventBus | None = None,
         infra_event_bus: DomainEventBus | None = None,
-        db_session_factory: Any | None = None
+        db_session_factory: Any | None = None,
     ) -> None:
         self._domain_event_bus = domain_event_bus
         self._infra_event_bus = infra_event_bus
         if db_session_factory:
-            self._uow: UserUnitOfWork = UOW(
-                session_factory=db_session_factory
-            )
+            self._uow: UserUnitOfWork = UOW(session_factory=db_session_factory)
         else:
             self._uow: UserUnitOfWork = UOW()
 
@@ -52,13 +44,9 @@ class UserService:
             print("Exit form create user")
             return user
 
-    async def update_user(
-        self, id: UUID, user: User
-    ) -> User:
+    async def update_user(self, id: UUID, user: User) -> User:
         async with self._uow as uow:
-            user: User = await uow.users.update(
-                id=id, model=user
-            )
+            user: User = await uow.users.update(id=id, model=user)
             await uow.commit()
             event = UserUpdatedEvent(**await user.to_dict())
             if self._infra_event_bus:
@@ -68,13 +56,9 @@ class UserService:
     async def first_update_user(self, user: User) -> User:
         user_domain_client = UserDomainClient()
         user_data_from_user_domain = user_domain_client.get(id=user.user_id)
-        user_data = User(
-            **user_data_from_user_domain
-        )
+        user_data = User(**user_data_from_user_domain)
         async with self._uow as uow:
-            user: User = await uow.users.update(
-                id=user_data.user_id, model=user_data
-            )
+            user: User = await uow.users.update(id=user_data.user_id, model=user_data)
             await uow.commit()
             event = UserUpdatedEvent(**await user.to_dict())
             if self._infra_event_bus:
@@ -90,7 +74,7 @@ class UserService:
     #     async with self._uow as uow:
     #         user: User = await uow.users.get(id=id)
     #         return user
-        
+
     # async def delete_user(self, id: UUID) -> User:
     #     async with self._uow as uow:
     #         user: User = await uow.users.delete(id=id)

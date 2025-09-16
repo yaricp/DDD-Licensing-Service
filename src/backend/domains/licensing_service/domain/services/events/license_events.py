@@ -1,7 +1,7 @@
-from uuid import UUID
-from enum import IntEnum
-from datetime import datetime
 from dataclasses import dataclass
+from datetime import datetime
+from enum import IntEnum
+from uuid import UUID
 
 from backend.core.infra.events import AbstractEvent
 

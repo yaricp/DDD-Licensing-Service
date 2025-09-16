@@ -1,20 +1,13 @@
 from __future__ import annotations
 
-from uuid import UUID
-from typing import Optional, List
 from dataclasses import dataclass, field
+from typing import List, Optional
+from uuid import UUID
 
 from backend.core.domain.aggregate import AbstractAggregateRoot
 
-# from ..exceptions.tenant import (
-#     TenantAlreadyExistsError,
-#     TenantNotFoundError
-# )
-
-from .subdivision import Subdivision
 from .entities.user import User
-
-from ..services.commands.user_commands import CreateUserCommand
+from .subdivision import Subdivision
 
 
 @dataclass(eq=False, slots=True)
@@ -27,9 +20,7 @@ class Tenant(AbstractAggregateRoot):
     users: List[User] = field(default_factory=lambda: [])
     subdivisions: List[Subdivision] = field(default_factory=lambda: [])
 
-    def update(
-        self, name: str, address: str, email: str, phone: str
-    ) -> None:
+    def update(self, name: str, address: str, email: str, phone: str) -> None:
         self.name = name
         self.address = address
         self.email = email
@@ -42,17 +33,32 @@ class Tenant(AbstractAggregateRoot):
         print("Factory method")
         user = User.make(user_id)
         return cls(
-            name=name, address=address, email=email, phone=phone,
-            users=[user], subdivisions=[]
+            name=name,
+            address=address,
+            email=email,
+            phone=phone,
+            users=[user],
+            subdivisions=[],
         )
 
     @classmethod
     def make_from_persistence(
-        cls, id: UUID, name: str, address: str, email: str,
-        phone: str, users: list, subdivisions: list
+        cls,
+        id: UUID,
+        name: str,
+        address: str,
+        email: str,
+        phone: str,
+        users: list,
+        subdivisions: list,
     ) -> Tenant:
         print("Make aggregate form DB method")
         return cls(
-            id=id, name=name, address=address, email=email, phone=phone,
-            users=users, subdivisions=subdivisions
+            id=id,
+            name=name,
+            address=address,
+            email=email,
+            phone=phone,
+            users=users,
+            subdivisions=subdivisions,
         )

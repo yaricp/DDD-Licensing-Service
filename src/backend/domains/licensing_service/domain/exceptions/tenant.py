@@ -1,12 +1,9 @@
-
-from ..constants import ErrorDetails
 from backend.core.exceptions import (
-    DetailedHTTPException,
-    PreconditionFailedError,
     AlreadyExistsError,
     NotFoundError,
-    ValidationError, BadRequestError
 )
+
+from ..constants import ErrorDetails
 
 
 class TenantAlreadyExistsError(AlreadyExistsError):

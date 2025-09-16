@@ -1,25 +1,19 @@
+from typing import Any, List, Optional, Sequence
 from uuid import UUID
-from typing import List, Optional, Sequence, Any
-from sqlalchemy import insert, select, delete, update, Result, RowMapping, Row
+
+from sqlalchemy import Result, Row, RowMapping, delete, insert, select, update
 
 from backend.core.domain.entity import AbstractEntity
-
-from backend.core.infra.database.repositories import (
-    SQLAlchemyAbstractRepository
-)
+from backend.core.infra.database.repositories import SQLAlchemyAbstractRepository
 
 from ....domain.aggregates.entities.license import License
 from ....domain.services.repos.license_repo import LicenseRepository
 
 
-class SQLAlchemyLicenseRepository(
-    SQLAlchemyAbstractRepository, LicenseRepository
-):
+class SQLAlchemyLicenseRepository(SQLAlchemyAbstractRepository, LicenseRepository):
 
     async def get(self, id: UUID) -> Optional[License]:
-        result: Result = await self._session.execute(
-            select(License).filter_by(id=id)
-        )
+        result: Result = await self._session.execute(select(License).filter_by(id=id))
         return result.scalar_one_or_none()
 
     async def get_by_type(self, type: str) -> Optional[License]:
@@ -36,9 +30,9 @@ class SQLAlchemyLicenseRepository(
 
     async def add(self, model: AbstractEntity) -> License:
         result: Result = await self._session.execute(
-            insert(License).values(
-                **await model.to_dict(exclude={'id'})
-            ).returning(License)
+            insert(License)
+            .values(**await model.to_dict(exclude={"id"}))
+            .returning(License)
         )
 
         return result.scalar_one()
@@ -50,23 +44,21 @@ class SQLAlchemyLicenseRepository(
         # license = result_get_license.scalar_one()
         # model.tenant_id = license.tenant_id
         result: Result = await self._session.execute(
-            update(License).filter_by(id=id).values(
+            update(License)
+            .filter_by(id=id)
+            .values(
                 **await model.to_dict(
-                    exclude={
-                        "type", "count_requests",
-                        "status", "datetime_created"
-                    }
+                    exclude={"type", "count_requests", "status", "datetime_created"}
                 )
-            ).returning(License)
+            )
+            .returning(License)
         )
 
         return result.scalar_one()
 
     async def delete(self, id: UUID) -> License:
         result = await self._session.execute(
-            delete(License).filter_by(id=id).returning(
-                License
-            )
+            delete(License).filter_by(id=id).returning(License)
         )
         return result.scalar_one()
 
@@ -76,7 +68,7 @@ class SQLAlchemyLicenseRepository(
         [TenantModel(**await r.to_dict()) for r in result.scalars().all()]
         to avoid sqlalchemy.orm.exc.UnmappedInstanceError lately.
 
-        Checking by asserts, that expected return type is equal 
+        Checking by asserts, that expected return type is equal
         to fact return type.
         """
 

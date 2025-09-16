@@ -1,7 +1,7 @@
-from pydantic import BaseModel
-from typing import Any, Type, TypeVar, List
 from dataclasses import asdict, fields, is_dataclass
+from typing import Any, List, Type, TypeVar
 
+from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -24,13 +24,11 @@ class BaseMapper:
                 else:
                     value = BaseMapper._convert_item(value)
                 data[f.name] = value
-            return schema_cls(**data)    
+            return schema_cls(**data)
         elif hasattr(domain_obj, "__dict__"):
-            data = vars(domain_obj)    # regular class -> dict
+            data = vars(domain_obj)  # regular class -> dict
         else:
-            raise TypeError(
-                f"Unsupported domain object type: {type(domain_obj)}"
-            )
+            raise TypeError(f"Unsupported domain object type: {type(domain_obj)}")
 
         return schema_cls(**data)
 

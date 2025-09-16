@@ -1,28 +1,27 @@
 from __future__ import annotations
-from uuid import UUID, uuid4
-from typing import List, Optional
+
 from dataclasses import dataclass, field
+from typing import List, Optional
+from uuid import UUID, uuid4
 
 from backend.core.domain.aggregate import AbstractAggregateRoot
 from backend.core.infra.eventbus import AbstractEventBus
 
-from .entities.license import License
-from .entities.stat_row import StatisticRow
-from ..exceptions.subdivision import SubdivisionInactiveError
 from ..exceptions.license import (
-    LicenseExpiredError, LicenseInactiveError, LicenseAlreadyInUseError,
-    LicenseWrongTenantError, LicenseNotFoundError
+    LicenseInactiveError,
+    LicenseNotFoundError,
 )
-from ..exceptions.statistic_row import (
-    SubdivisionStatisticAlreadyExistsError
-)
-from ..value_objects.work_status import WorkStatus
-from ..value_objects.license_status import LicenseStatus
-from ..value_objects.license_type import LicenseType
+from ..exceptions.statistic_row import SubdivisionStatisticAlreadyExistsError
+from ..exceptions.subdivision import SubdivisionInactiveError
 from ..services.events.license_events import (
-    LicenseActivatedEvent, LicenseDeactivatedEvent
+    LicenseActivatedEvent,
+    LicenseDeactivatedEvent,
 )
 from ..services.events.statistic_row_events import StatisticRowAddedEvent
+from ..value_objects.license_type import LicenseType
+from ..value_objects.work_status import WorkStatus
+from .entities.license import License
+from .entities.stat_row import StatisticRow
 
 
 @dataclass(eq=False, slots=True)
@@ -37,9 +36,11 @@ class Subdivision(AbstractAggregateRoot):
     statistics: List[StatisticRow] = field(default_factory=lambda: [])
 
     def update(
-        self, name: str, location: str,
+        self,
+        name: str,
+        location: str,
         link_to_subdivision_processing_domain: str,
-        work_status: WorkStatus
+        work_status: WorkStatus,
     ) -> None:
         self.name = name
         self.location = location
@@ -49,25 +50,32 @@ class Subdivision(AbstractAggregateRoot):
         self.work_status = work_status
 
     def add_license(
-        self, name: str, description: str, type: LicenseType,
-        count_requests: int, subdivision_id: UUID
+        self,
+        name: str,
+        description: str,
+        type: LicenseType,
+        count_requests: int,
+        subdivision_id: UUID,
     ) -> License:
         new_license = License.make(
-            name=name, description=description, type=type,
-            subdivision_id=subdivision_id, count_requests=count_requests
+            name=name,
+            description=description,
+            type=type,
+            subdivision_id=subdivision_id,
+            count_requests=count_requests,
         )
         self.licenses.append(new_license)
         return new_license
 
     def update_license(
-        self, id: UUID, name: str,
+        self,
+        id: UUID,
+        name: str,
         description: str,
         type: LicenseType = LicenseType.BYTIME,
-        count_requests: int = 0
+        count_requests: int = 0,
     ) -> None:
-        filtered_licenses = list(filter(
-            lambda x: x.id == id, self.licenses
-        ))
+        filtered_licenses = list(filter(lambda x: x.id == id, self.licenses))
         if not filtered_licenses:
             raise LicenseNotFoundError
 
@@ -78,9 +86,9 @@ class Subdivision(AbstractAggregateRoot):
         new_license.count_requests = count_requests
 
     def delete_license(self, id: UUID) -> None:
-        filtered_licenses: List[License] = list(filter(
-            lambda x: x.id == id, self.licenses
-        ))
+        filtered_licenses: List[License] = list(
+            filter(lambda x: x.id == id, self.licenses)
+        )
         if not filtered_licenses:
             raise LicenseNotFoundError
         current_license = filtered_licenses[0]
@@ -111,17 +119,15 @@ class Subdivision(AbstractAggregateRoot):
         for strow in self.statistics:
             print(f"strow: {strow}")
         return sum(
-            r.count_requests for r in filter(
-                lambda x: x.created > self.active_license.activated,
-                self.statistics
+            r.count_requests
+            for r in filter(
+                lambda x: x.created > self.active_license.activated, self.statistics
             )
         )
 
     def check_license(self):
         if self.active_license:
-            self.active_license.check(
-                self.total_count_requests
-            )
+            self.active_license.check(self.total_count_requests)
 
     async def activate_license(
         self, license_id: UUID, eventbus: AbstractEventBus | None
@@ -129,10 +135,9 @@ class Subdivision(AbstractAggregateRoot):
         print("Activate_license started")
         print(f"self.licenses: {self.licenses}")
         print(f"license_id: {license_id}")
-        filtered_license: Optional[License] = list(filter(
-            lambda x: x.id == license_id,
-            self.licenses
-        ))
+        filtered_license: Optional[License] = list(
+            filter(lambda x: x.id == license_id, self.licenses)
+        )
         print(f"filtered_license: {filtered_license}")
         if not filtered_license:
             raise LicenseNotFoundError
@@ -142,35 +147,25 @@ class Subdivision(AbstractAggregateRoot):
         if license.is_active:
             self.activate()
         if eventbus:
-            eventbus.add_event(
-                LicenseActivatedEvent(
-                    **await license.to_dict()
-                )
-            )
+            eventbus.add_event(LicenseActivatedEvent(**await license.to_dict()))
 
     async def deactivate_license(
         self, license_id: UUID, eventbus: AbstractEventBus | None
     ) -> None:
         print("deactivate_license started")
-        filtered_license: Optional[License] = list(filter(
-            lambda x: x.id == license_id,
-            self.licenses
-        ))
+        filtered_license: Optional[License] = list(
+            filter(lambda x: x.id == license_id, self.licenses)
+        )
         if not filtered_license:
             raise LicenseNotFoundError
         license = filtered_license[0]
         license.deactivate()
         self.deactivate()
         if eventbus:
-            eventbus.add_event(
-                LicenseDeactivatedEvent(
-                    **await license.to_dict()
-                )
-            )
+            eventbus.add_event(LicenseDeactivatedEvent(**await license.to_dict()))
 
     async def save_day_statistic(
-        self, stat_row: StatisticRow,
-        eventbus: AbstractEventBus | None
+        self, stat_row: StatisticRow, eventbus: AbstractEventBus | None
     ):
         print(f"stat_row: {stat_row}")
         if not self.is_active:
@@ -188,44 +183,49 @@ class Subdivision(AbstractAggregateRoot):
             self.deactivate()
             if eventbus:
                 eventbus.add_event(
-                    LicenseDeactivatedEvent(
-                        **await deactivated_license.to_dict()
-                    )
+                    LicenseDeactivatedEvent(**await deactivated_license.to_dict())
                 )
         self.statistics.append(stat_row)
         if eventbus:
-            eventbus.add_event(
-                StatisticRowAddedEvent(
-                    **await stat_row.to_dict()
-                )
-            )
+            eventbus.add_event(StatisticRowAddedEvent(**await stat_row.to_dict()))
 
     @property
     def is_active(self) -> bool:
         return self.work_status == WorkStatus.ACTIVE
 
     @classmethod
-    def make(
-        cls, name: str, location: str, tenant_id: UUID
-    ) -> Subdivision:
+    def make(cls, name: str, location: str, tenant_id: UUID) -> Subdivision:
         return cls(
             id=uuid4(),
-            name=name, location=location, tenant_id=tenant_id,
+            name=name,
+            location=location,
+            tenant_id=tenant_id,
             licenses=[],
             statistics=[],
-            work_status=WorkStatus.INACTIVE
+            work_status=WorkStatus.INACTIVE,
         )
 
     @classmethod
     def make_from_persistence(
-        cls, id: UUID, name: str, location: str, tenant_id: UUID,
-        work_status: WorkStatus, link_to_subdivision_processing_domain: str,
-        licenses: list, statistics: list
+        cls,
+        id: UUID,
+        name: str,
+        location: str,
+        tenant_id: UUID,
+        work_status: WorkStatus,
+        link_to_subdivision_processing_domain: str,
+        licenses: list,
+        statistics: list,
     ) -> Subdivision:
         return cls(
-            id=id, name=name, location=location,
-            tenant_id=tenant_id, work_status=work_status,
+            id=id,
+            name=name,
+            location=location,
+            tenant_id=tenant_id,
+            work_status=work_status,
             link_to_subdivision_processing_domain=(
                 link_to_subdivision_processing_domain
-            ), licenses=licenses, statistics=statistics
+            ),
+            licenses=licenses,
+            statistics=statistics,
         )

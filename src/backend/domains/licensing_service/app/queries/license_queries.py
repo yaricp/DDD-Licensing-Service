@@ -1,14 +1,12 @@
+from typing import List, Optional
 from uuid import UUID
-from typing import Optional, List
 
 # ---Domain imports---
 from ...domain.aggregates.entities.license import License
 from ...domain.exceptions.license import LicenseNotFoundError
 
 # ---Infrastructure imports---
-from ...infra.uow.sqlalchemy.license_uow import (
-    SQLAlchemyLicenseUnitOfWork as UOW
-)
+from ...infra.uow.sqlalchemy.license_uow import SQLAlchemyLicenseUnitOfWork as UOW
 
 
 class LicenseQuery:
@@ -34,9 +32,7 @@ class LicenseQuery:
 
     async def get_license_by_status(self, status: str) -> License:
         async with self._uow as uow:
-            license: Optional[
-                License
-            ] = await uow.licenses.get_by_status(status=status)
+            license: Optional[License] = await uow.licenses.get_by_status(status=status)
             if not license:
                 raise LicenseNotFoundError
             return license

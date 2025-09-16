@@ -1,16 +1,11 @@
-from ....domain.services.handlers.tenant_handlers import (
-    TenantCommandHandler
-)
-
-from ....domain.services.commands.tenant_commands import (
-    CreateTenantCommand, UpdateTenantCommand, DeleteTenantCommand
-)
-
+from ....app.services.tenant_services import TenantService
 from ....domain.aggregates.tenant import Tenant
-
-from ....app.services.tenant_services import (
-    TenantService
+from ....domain.services.commands.tenant_commands import (
+    CreateTenantCommand,
+    DeleteTenantCommand,
+    UpdateTenantCommand,
 )
+from ....domain.services.handlers.tenant_handlers import TenantCommandHandler
 
 
 class CreateTenantCommandHandler(TenantCommandHandler):
@@ -22,13 +17,10 @@ class CreateTenantCommandHandler(TenantCommandHandler):
         operation was successfully executed.
         """
         tenant_service: TenantService = TenantService(
-            domain_event_bus=self.domain_event_bus,
-            infra_event_bus=self.infra_event_bus
+            domain_event_bus=self.domain_event_bus, infra_event_bus=self.infra_event_bus
         )
         # tenant: Tenant = Tenant(**await command.to_dict())
-        tenant = await tenant_service.create_tenant(
-            create_command=command
-        )
+        tenant = await tenant_service.create_tenant(create_command=command)
         return tenant
 
 
@@ -41,12 +33,9 @@ class UpdateTenantCommandHandler(TenantCommandHandler):
         operation was successfully executed.
         """
         tenant_service: TenantService = TenantService(
-            domain_event_bus=self.domain_event_bus,
-            infra_event_bus=self.infra_event_bus
+            domain_event_bus=self.domain_event_bus, infra_event_bus=self.infra_event_bus
         )
-        tenant = await tenant_service.update_tenant(
-            update_command=command
-        )
+        tenant = await tenant_service.update_tenant(update_command=command)
         return tenant
 
 
@@ -59,8 +48,7 @@ class DeleteTenantCommandHandler(TenantCommandHandler):
         operation was successfully executed.
         """
         tenant_service: TenantService = TenantService(
-            domain_event_bus=self.domain_event_bus,
-            infra_event_bus=self.infra_event_bus
+            domain_event_bus=self.domain_event_bus, infra_event_bus=self.infra_event_bus
         )
         tenant = await tenant_service.delete_tenant(id=command.id)
         return tenant

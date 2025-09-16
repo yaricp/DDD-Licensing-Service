@@ -1,8 +1,9 @@
 from __future__ import annotations
-from uuid import UUID
-from typing import Optional
-from datetime import datetime
+
 from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
+from uuid import UUID
 
 from backend.core.domain.entity import AbstractEntity
 
@@ -15,11 +16,9 @@ class StatisticRow(AbstractEntity):
     id: Optional[UUID] = None
 
     @classmethod
-    def make(
-        cls, count_requests: int, subdivision_id: UUID
-    ) -> StatisticRow:
+    def make(cls, count_requests: int, subdivision_id: UUID) -> StatisticRow:
         return cls(
             created=datetime.now(),
             count_requests=count_requests,
-            subdivision_id=subdivision_id
+            subdivision_id=subdivision_id,
         )

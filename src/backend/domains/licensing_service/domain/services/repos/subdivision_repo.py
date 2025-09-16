@@ -1,14 +1,13 @@
-from uuid import UUID
-from typing import Optional, List
 from abc import ABC, abstractmethod
+from typing import List, Optional
+from uuid import UUID
 
-from backend.core.domain.aggregate import AbstractAggregateRoot
-from backend.core.infra.repositories import AbstractRepository
 from backend.core.domain.entity import AbstractEntity
+from backend.core.infra.repositories import AbstractRepository
 
-from ...aggregates.subdivision import Subdivision
 from ...aggregates.entities.license import License
 from ...aggregates.entities.stat_row import StatisticRow
+from ...aggregates.subdivision import Subdivision
 
 
 class SubdivisionRepository(AbstractRepository, ABC):
@@ -19,10 +18,9 @@ class SubdivisionRepository(AbstractRepository, ABC):
     can be easily replaced in subdivisions unit of work
     using dependency injection without disrupting its functionality.
     """
+
     @abstractmethod
-    async def add(
-        self, model: AbstractEntity
-    ) -> Subdivision:
+    async def add(self, model: AbstractEntity) -> Subdivision:
         raise NotImplementedError
 
     @abstractmethod
@@ -30,15 +28,11 @@ class SubdivisionRepository(AbstractRepository, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(
-        self, id: UUID, model: AbstractEntity
-    ) -> Subdivision:
+    async def update(self, id: UUID, model: AbstractEntity) -> Subdivision:
         raise NotImplementedError
-    
+
     @abstractmethod
-    async def save(
-        self, model: AbstractEntity
-    ) -> Subdivision:
+    async def save(self, model: AbstractEntity) -> Subdivision:
         raise NotImplementedError
 
     @abstractmethod
@@ -58,16 +52,3 @@ class SubdivisionRepository(AbstractRepository, ABC):
         self, model: StatisticRow
     ) -> Optional[StatisticRow]:
         raise NotImplementedError
-
-    # @abstractmethod
-    # async def get_by_name(
-    #     self, name: str
-    # ) -> Optional[Subdivision]:
-    #     raise NotImplementedError
-
-    # @abstractmethod
-    # async def get_by_location(
-    #     self, location: str
-    # ) -> Optional[Subdivision]:
-    #     raise NotImplementedError
-

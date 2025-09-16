@@ -1,5 +1,5 @@
-from uuid import UUID
 from typing import List
+from uuid import UUID
 
 # --- Core Imports ---
 from backend.core.messagebus_handler import GlobalMessageBusHandler
@@ -11,7 +11,6 @@ from ....app.queries.user_queries import UserQuery
 # --- API Imports ---
 from ..schemas.user import User
 from ..services.utils import BaseMapper
-
 
 """
 Can not use Bootstrap object in dependencies,
@@ -31,8 +30,7 @@ async def get_all_users() -> List[User]:
 
 
 async def get_or_create_user(
-    user_id: UUID,
-    messagebus_handler: GlobalMessageBusHandler
+    user_id: UUID, messagebus_handler: GlobalMessageBusHandler
 ) -> User:
     user_queries = UserQuery()
     command_result = await user_queries.get_or_create_user(

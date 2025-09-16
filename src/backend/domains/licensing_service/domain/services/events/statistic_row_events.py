@@ -1,6 +1,6 @@
-from uuid import UUID
-from datetime import datetime
 from dataclasses import dataclass
+from datetime import datetime
+from uuid import UUID
 
 from backend.core.infra.events import AbstractEvent
 

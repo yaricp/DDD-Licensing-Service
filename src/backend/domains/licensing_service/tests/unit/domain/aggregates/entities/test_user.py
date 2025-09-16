@@ -1,9 +1,8 @@
 # tests/test_user.py
 
 from uuid import uuid4
-from backend.domains.licensing_service.domain.aggregates.entities.user import (
-    User
-)
+
+from backend.domains.licensing_service.domain.aggregates.entities.user import User
 
 
 def test_make_creates_user_with_id():

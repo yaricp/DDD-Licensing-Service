@@ -1,22 +1,21 @@
+from typing import Any, Optional
 from uuid import UUID
-from typing import Optional, Any
 
 # ---Domain imports---
 from ...domain.aggregates.entities.license import License
 from ...domain.aggregates.subdivision import Subdivision
-from ...domain.services.domain_event_bus import DomainEventBus
-from ...domain.services.uow.license_uow import LicenseUnitOfWork
-from ...domain.services.events.license_events import LicenseCreatedEvent
-from ...domain.services.commands.license_commands import (
-    CreateLicenseCommand, UpdateLicenseCommand, DeleteLicenseCommand
-)
 from ...domain.exceptions.license import LicenseNotFoundError
+from ...domain.services.commands.license_commands import (
+    CreateLicenseCommand,
+    DeleteLicenseCommand,
+    UpdateLicenseCommand,
+)
+from ...domain.services.domain_event_bus import DomainEventBus
+from ...domain.services.events.license_events import LicenseCreatedEvent
+from ...domain.services.uow.license_uow import LicenseUnitOfWork
 
 # ---Infrastructure imports---
-from ...infra.uow.sqlalchemy.license_uow import (
-    SQLAlchemyLicenseUnitOfWork as UOW
-)
-
+from ...infra.uow.sqlalchemy.license_uow import SQLAlchemyLicenseUnitOfWork as UOW
 from ..services.subdivision_services import SubdivisionService
 
 
@@ -31,24 +30,20 @@ class LicenseService:
         self,
         domain_event_bus: DomainEventBus | None = None,
         infra_event_bus: DomainEventBus | None = None,
-        db_session_factory: Any | None = None
+        db_session_factory: Any | None = None,
     ) -> None:
         self._domain_event_bus = domain_event_bus
         self._infra_event_bus = infra_event_bus
         if db_session_factory:
-            self._uow: LicenseUnitOfWork = UOW(
-                session_factory=db_session_factory
-            )
+            self._uow: LicenseUnitOfWork = UOW(session_factory=db_session_factory)
         else:
             self._uow: LicenseUnitOfWork = UOW()
 
-    async def create_license(
-        self, create_command: CreateLicenseCommand
-    ) -> License:
+    async def create_license(self, create_command: CreateLicenseCommand) -> License:
         async with self._uow as uow:
             subdivision_service = SubdivisionService(
                 domain_event_bus=self._domain_event_bus,
-                infra_event_bus=self._infra_event_bus
+                infra_event_bus=self._infra_event_bus,
             )
             subdivision = subdivision_service.get_subdivision_by_id(
                 id=create_command.id
@@ -57,7 +52,7 @@ class LicenseService:
                 name=create_command.name,
                 description=create_command.description,
                 type=create_command.type,
-                count_requests=create_command.count_requests
+                count_requests=create_command.count_requests,
             )
             event = LicenseCreatedEvent(**await license.to_dict())
             if self._infra_event_bus:
@@ -71,17 +66,13 @@ class LicenseService:
                 raise LicenseNotFoundError
         return license
 
-    async def update_license(
-        self, id: UUID, license: License
-    ) -> License:
+    async def update_license(self, id: UUID, license: License) -> License:
         async with self._uow as uow:
             found_license = await uow.licenses.get(id=id)
             if not found_license:
                 raise LicenseNotFoundError
             license.tenant_id = found_license.tenant_id
-            updated_license = await uow.licenses.update(
-                id=id, model=license
-            )
+            updated_license = await uow.licenses.update(id=id, model=license)
             await uow.commit()
             return updated_license
 

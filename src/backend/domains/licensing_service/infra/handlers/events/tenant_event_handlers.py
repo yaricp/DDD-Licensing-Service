@@ -1,7 +1,5 @@
+from ....domain.services.events.tenant_events import TenantCreatedEvent
 from ....domain.services.handlers.tenant_handlers import TenantEventHandler
-from ....domain.services.events.tenant_events import (
-    TenantCreatedEvent
-)
 
 
 class TenantCreatedEventHandler(TenantEventHandler):

@@ -1,7 +1,7 @@
-from uuid import UUID
+from dataclasses import dataclass
 from enum import IntEnum
 from typing import Optional
-from dataclasses import dataclass
+from uuid import UUID
 
 from backend.core.infra.events import AbstractEvent
 

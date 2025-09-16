@@ -1,6 +1,6 @@
-from uuid import UUID
-from typing import Optional
 from dataclasses import dataclass
+from typing import Optional
+from uuid import UUID
 
 from backend.core.infra.commands import AbstractCommand
 

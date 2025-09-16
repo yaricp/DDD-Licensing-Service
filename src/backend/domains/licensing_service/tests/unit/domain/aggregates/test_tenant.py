@@ -1,10 +1,9 @@
 # tests/test_tenant.py
 
 from uuid import uuid4
+
+from backend.domains.licensing_service.domain.aggregates.entities.user import User
 from backend.domains.licensing_service.domain.aggregates.tenant import Tenant
-from backend.domains.licensing_service.domain.aggregates.entities.user import (
-    User
-)
 
 
 def test_make_creates_tenant_with_user():
@@ -14,7 +13,7 @@ def test_make_creates_tenant_with_user():
         name="Tenant1",
         address="123 Main St",
         email="tenant1@example.com",
-        phone="1234567890"
+        phone="1234567890",
     )
 
     assert tenant.name == "Tenant1"
@@ -37,7 +36,7 @@ def test_make_from_persistence_restores_aggregate():
         email="tenant2@example.com",
         phone="0987654321",
         users=[user],
-        subdivisions=subdivisions
+        subdivisions=subdivisions,
     )
 
     assert tenant.name == "Tenant2"
@@ -55,14 +54,14 @@ def test_update_changes_fields():
         name="OldTenant",
         address="Old Address",
         email="old@example.com",
-        phone="1111111111"
+        phone="1111111111",
     )
 
     tenant.update(
         name="NewTenant",
         address="New Address",
         email="new@example.com",
-        phone="2222222222"
+        phone="2222222222",
     )
 
     assert tenant.name == "NewTenant"

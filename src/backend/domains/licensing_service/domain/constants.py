@@ -1,4 +1,5 @@
 from backend.core.constants import ErrorDetails as BaseErrorDetails
+
 # from src.users.config import UserValidationConfig
 
 
@@ -22,15 +23,21 @@ class ErrorDetails(BaseErrorDetails):
     LICENSE_ALREADY_IN_USE: str = "License already in use"
     LICENSE_WRONG_TENANT: str = "Wrong Tenant of Subdivision"
 
-    SUBDIVISION_ALREADY_EXISTS: str = "Subdivision with provided credentials already exists"
+    SUBDIVISION_ALREADY_EXISTS: str = (
+        "Subdivision with provided credentials already exists"
+    )
     SUBDIVISION_NOT_FOUND: str = "Subdivision with provided credentials not found"
-    SUBDIVISION_ATTRIBUTE_REQUIRED: str = "Subdivision id, email or username is required"
+    SUBDIVISION_ATTRIBUTE_REQUIRED: str = (
+        "Subdivision id, email or username is required"
+    )
     SUBDIVISION_CAN_NOT_VOTE_FOR_HIMSELF: str = "User can not vote for himself"
     SUBDIVISION_STATISTICS_NOT_FOUND: str = "Subdivision statistics not found"
     SUBDIVISION_ALREADY_VOTED: str = "Current user already voted for provided user"
     SUBDIVISION_INACTIVE: str = "Subdivision is inactive"
 
-    SUBDIVISION_STATISTIC_ALREADY_EXISTS: str = "Subdivision Statistic Row already exists"
+    SUBDIVISION_STATISTIC_ALREADY_EXISTS: str = (
+        "Subdivision Statistic Row already exists"
+    )
 
     # USER_ALREADY_EXISTS: str = "User with provided credentials already exists"
     # USER_NOT_FOUND: str = "User with provided credentials not found"

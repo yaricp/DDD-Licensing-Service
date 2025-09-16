@@ -1,6 +1,6 @@
-from uuid import UUID
-from enum import IntEnum
 from dataclasses import dataclass
+from enum import IntEnum
+from uuid import UUID
 
 from backend.core.infra.events import AbstractEvent
 

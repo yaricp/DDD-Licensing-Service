@@ -1,16 +1,7 @@
-from ....domain.aggregates.entities.user import (
-    User
-)
-from ....domain.services.handlers.user_handlers import (
-    UserCommandHandler
-)
-from ....domain.services.commands.user_commands import (
-    CreateUserCommand
-)
-
-from ....app.services.user_services import (
-    UserService
-)
+from ....app.services.user_services import UserService
+from ....domain.aggregates.entities.user import User
+from ....domain.services.commands.user_commands import CreateUserCommand
+from ....domain.services.handlers.user_handlers import UserCommandHandler
 
 
 class CreateUserCommandHandler(UserCommandHandler):
@@ -22,8 +13,7 @@ class CreateUserCommandHandler(UserCommandHandler):
         operation was successfully executed.
         """
         users_service: UserService = UserService(
-            domain_event_bus=self.domain_event_bus,
-            infra_event_bus=self.infra_event_bus
+            domain_event_bus=self.domain_event_bus, infra_event_bus=self.infra_event_bus
         )
         user_new: User = User(**await command.to_dict())
         user = await users_service.create_user(model=user_new)

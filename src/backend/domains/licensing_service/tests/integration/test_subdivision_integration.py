@@ -417,9 +417,7 @@ async def test_update_license_in_subdivision(db_session):
         subdivision_id=subdivision.id,
     )
 
-    updated_subdivision = await subdivision_service.update_license(
-        update_license_cmd
-    )
+    updated_subdivision = await subdivision_service.update_license(update_license_cmd)
 
     assert updated_subdivision is not None
     assert len(updated_subdivision.licenses) == 1

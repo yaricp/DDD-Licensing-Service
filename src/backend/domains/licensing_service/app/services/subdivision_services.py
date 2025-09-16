@@ -1,39 +1,41 @@
+from typing import Any, List, Optional
 from uuid import UUID
-from typing import Optional, List, Any
+
+from ...domain.aggregates.entities.license import License
+from ...domain.aggregates.entities.stat_row import StatisticRow
 
 # ---Domain imports---
 from ...domain.aggregates.subdivision import Subdivision
-from ...domain.aggregates.entities.license import License
-from ...domain.aggregates.entities.stat_row import StatisticRow
-from ...domain.services.domain_event_bus import DomainEventBus
-from ...domain.services.events.license_events import (
-    LicenseActivatedEvent, LicenseCreatedEvent, LicenseDeactivatedEvent,
-    LicenseDeletedEvent
-)
-from ...domain.services.events.subdivision_events import (
-    SubdivisionCreatedEvent, SubdivisionUpdatedEvent,
-    SubdivisionDeletedEvent, SubdivisionLicenseExpiredEvent
+from ...domain.exceptions.subdivision import SubdivisionNotFoundError
+from ...domain.services.commands.license_commands import (
+    CreateLicenseCommand,
+    DeleteLicenseCommand,
+    UpdateLicenseCommand,
 )
 from ...domain.services.commands.subdivision_commands import (
-    AddStatisticRowCommand, CreateSubdivisionCommand,
-    UpdateSubdivisionCommand
+    AddStatisticRowCommand,
+    CreateSubdivisionCommand,
+    UpdateSubdivisionCommand,
 )
-from ...domain.services.commands.license_commands import (
-    CreateLicenseCommand, UpdateLicenseCommand, DeleteLicenseCommand
+from ...domain.services.domain_event_bus import DomainEventBus
+from ...domain.services.events.license_events import (
+    LicenseActivatedEvent,
+    LicenseCreatedEvent,
+    LicenseDeactivatedEvent,
+    LicenseDeletedEvent,
 )
-from ...domain.services.events.statistic_row_events import (
-    StatisticRowAddedEvent
+from ...domain.services.events.statistic_row_events import StatisticRowAddedEvent
+from ...domain.services.events.subdivision_events import (
+    SubdivisionCreatedEvent,
+    SubdivisionDeletedEvent,
+    SubdivisionLicenseExpiredEvent,
+    SubdivisionUpdatedEvent,
 )
-from ...domain.services.uow.subdivision_uow import (
-    SubdivisionUnitOfWork
-)
-from ...domain.exceptions.subdivision import (
-    SubdivisionNotFoundError
-)
+from ...domain.services.uow.subdivision_uow import SubdivisionUnitOfWork
 
 # ---Infrastructure imports---
 from ...infra.uow.sqlalchemy.subdivision_uow import (
-    SQLAlchemySubdivisionUnitOfWork as UOW
+    SQLAlchemySubdivisionUnitOfWork as UOW,
 )
 
 
@@ -48,14 +50,12 @@ class SubdivisionService:
         self,
         domain_event_bus: DomainEventBus | None = None,
         infra_event_bus: DomainEventBus | None = None,
-        db_session_factory: Any | None = None
+        db_session_factory: Any | None = None,
     ) -> None:
         self._domain_event_bus = domain_event_bus
         self._infra_event_bus = infra_event_bus
         if db_session_factory:
-            self._uow: SubdivisionUnitOfWork = UOW(
-                session_factory=db_session_factory
-            )
+            self._uow: SubdivisionUnitOfWork = UOW(session_factory=db_session_factory)
         else:
             self._uow: SubdivisionUnitOfWork = UOW()
 
@@ -63,20 +63,15 @@ class SubdivisionService:
         self, subdivision_id: UUID, license_id: UUID
     ) -> Optional[Subdivision]:
         async with self._uow as uow:
-            subdivision = await uow.subdivisions.get(
-                id=subdivision_id
-            )
+            subdivision = await uow.subdivisions.get(id=subdivision_id)
             if subdivision:
-                await subdivision.activate_license(
-                    license_id, self._domain_event_bus
-                )
+                await subdivision.activate_license(license_id, self._domain_event_bus)
                 await uow.subdivisions.save(subdivision)
-                license = list(filter(
-                    lambda x: x.id == license_id,
-                    subdivision.licenses
-                ))[0]
+                license = list(
+                    filter(lambda x: x.id == license_id, subdivision.licenses)
+                )[0]
             await uow.commit()
-            
+
             if self._infra_event_bus:
                 self._infra_event_bus.add_event(
                     LicenseActivatedEvent(**await license.to_dict())
@@ -87,18 +82,13 @@ class SubdivisionService:
         self, subdivision_id: UUID, license_id: UUID
     ) -> Optional[Subdivision]:
         async with self._uow as uow:
-            subdivision = await uow.subdivisions.get(
-                id=subdivision_id
-            )
+            subdivision = await uow.subdivisions.get(id=subdivision_id)
             if subdivision:
-                await subdivision.deactivate_license(
-                    license_id, self._domain_event_bus
-                )
+                await subdivision.deactivate_license(license_id, self._domain_event_bus)
                 await uow.subdivisions.save(subdivision)
-                license = list(filter(
-                    lambda x: x.id == license_id,
-                    subdivision.licenses
-                ))[0]
+                license = list(
+                    filter(lambda x: x.id == license_id, subdivision.licenses)
+                )[0]
             await uow.commit()
             if self._infra_event_bus:
                 self._infra_event_bus.add_event(
@@ -115,9 +105,7 @@ class SubdivisionService:
             )
             if not subdivision:
                 raise SubdivisionNotFoundError
-            license = subdivision.add_license(
-                 **await add_license_command.to_dict()
-            )
+            license = subdivision.add_license(**await add_license_command.to_dict())
             await uow.subdivisions.save(subdivision)
             await uow.commit()
             subdivision = await self.get_subdivision_by_id(
@@ -141,7 +129,7 @@ class SubdivisionService:
             subdivision.update_license(
                 id=update_license_command.id,
                 name=update_license_command.name,
-                description=update_license_command.description
+                description=update_license_command.description,
             )
             new_sub = await uow.subdivisions.save(subdivision)
             await uow.commit()
@@ -160,9 +148,7 @@ class SubdivisionService:
             )
             if not subdivision:
                 raise SubdivisionNotFoundError
-            subdivision.delete_license(
-                id=delete_license_command.id
-            )
+            subdivision.delete_license(id=delete_license_command.id)
             await uow.subdivisions.save(subdivision)
             await uow.commit()
             subdivision = await self.get_subdivision_by_id(
@@ -177,15 +163,13 @@ class SubdivisionService:
         async with self._uow as uow:
             print(f"new_stats_command: {new_stats_command}")
             license_expired = False
-            # build subdivision aggregate from DB 
-            subdivision = await uow.subdivisions.get(
-                id=subdivision_id
-            )
+            # build subdivision aggregate from DB
+            subdivision = await uow.subdivisions.get(id=subdivision_id)
             if not subdivision:
                 raise SubdivisionNotFoundError
             new_stats_row = StatisticRow.make(
                 count_requests=new_stats_command.count_requests,
-                subdivision_id=new_stats_command.subdivision_id
+                subdivision_id=new_stats_command.subdivision_id,
             )
             # Adding a new stats row
             await subdivision.save_day_statistic(
@@ -199,9 +183,7 @@ class SubdivisionService:
             await uow.commit()
             if self._infra_event_bus:
                 self._infra_event_bus.add_event(
-                    StatisticRowAddedEvent(
-                        **await new_stats_row.to_dict()
-                    )
+                    StatisticRowAddedEvent(**await new_stats_row.to_dict())
                 )
             if license_expired:
                 if self._infra_event_bus:
@@ -219,9 +201,7 @@ class SubdivisionService:
     ) -> Subdivision:
         async with self._uow as uow:
             print(f"update_command: {update_command}")
-            subdivision = await self.get_subdivision_by_id(
-                id=update_command.id
-            )
+            subdivision = await self.get_subdivision_by_id(id=update_command.id)
             if not subdivision:
                 raise SubdivisionNotFoundError
             subdivision.update(
@@ -230,7 +210,7 @@ class SubdivisionService:
                 work_status=update_command.work_status,
                 link_to_subdivision_processing_domain=(
                     update_command.link_to_subdivision_processing_domain
-                )
+                ),
             )
             print(f"subdivision: {subdivision}")
             subdivision = await uow.subdivisions.update(
@@ -238,9 +218,7 @@ class SubdivisionService:
             )
             await uow.commit()
             print(f"Updated subdivision: {subdivision}")
-            subdivision = await self.get_subdivision_by_id(
-                id=subdivision.id
-            )
+            subdivision = await self.get_subdivision_by_id(id=subdivision.id)
             print(f"Last subdivision: {subdivision}")
             if self._infra_event_bus:
                 self._infra_event_bus.add_event(
@@ -250,16 +228,14 @@ class SubdivisionService:
                         location=subdivision.location,
                         work_status=subdivision.work_status,
                         tenant_id=subdivision.tenant_id,
-                        link_to_subdivision_processing_domain=subdivision.link_to_subdivision_processing_domain
+                        link_to_subdivision_processing_domain=subdivision.link_to_subdivision_processing_domain,
                     )
                 )
             return subdivision
 
     async def delete_subdivision(self, id: UUID) -> Subdivision:
         async with self._uow as uow:
-            subdivision = await self.get_subdivision_by_id(
-                id=id
-            )
+            subdivision = await self.get_subdivision_by_id(id=id)
             if not subdivision:
                 raise SubdivisionNotFoundError
             subdivision: Subdivision = await uow.subdivisions.delete(id=id)
@@ -274,7 +250,7 @@ class SubdivisionService:
                         tenant_id=subdivision.tenant_id,
                         link_to_subdivision_processing_domain=(
                             subdivision.link_to_subdivision_processing_domain
-                        )
+                        ),
                     )
                 )
             return subdivision
@@ -284,12 +260,11 @@ class SubdivisionService:
     ) -> Subdivision:
         async with self._uow as uow:
             subdivision = Subdivision.make(
-                name=create_command.name, location=create_command.location,
-                tenant_id=create_command.tenant_id
+                name=create_command.name,
+                location=create_command.location,
+                tenant_id=create_command.tenant_id,
             )
-            subdivision = await uow.subdivisions.add(
-                model=subdivision
-            )
+            subdivision = await uow.subdivisions.add(model=subdivision)
             await uow.commit()
             if self._infra_event_bus:
                 self._infra_event_bus.add_event(
@@ -299,7 +274,7 @@ class SubdivisionService:
                         work_status=subdivision.work_status,
                         location=subdivision.location,
                         tenant_id=subdivision.tenant_id,
-                        link_to_subdivision_processing_domain=subdivision.link_to_subdivision_processing_domain
+                        link_to_subdivision_processing_domain=subdivision.link_to_subdivision_processing_domain,
                     )
                 )
             return subdivision

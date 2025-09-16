@@ -1,5 +1,5 @@
-from uuid import UUID
 from typing import Optional
+from uuid import UUID
 
 # ---Core imports---
 from backend.core.messagebus_handler import GlobalMessageBusHandler
@@ -7,8 +7,9 @@ from backend.core.messagebus_handler import GlobalMessageBusHandler
 # ---Domain imports---
 from ...domain.aggregates.entities.license import License
 from ...domain.services.commands.license_commands import (
-    CreateLicenseCommand, UpdateLicenseCommand,
-    DeleteLicenseCommand
+    CreateLicenseCommand,
+    DeleteLicenseCommand,
+    UpdateLicenseCommand,
 )
 
 
@@ -18,15 +19,11 @@ class LicenseCommandUseCase:
         self.messagebus_handler = messagebus_handler
 
     async def create_license(self, **kwargs) -> Optional[License]:
-        await self.messagebus_handler.handle(
-            CreateLicenseCommand(**kwargs)
-        )
+        await self.messagebus_handler.handle(CreateLicenseCommand(**kwargs))
         return self.messagebus_handler.command_result
 
     async def update_license(self, **kwargs) -> License:
-        await self.messagebus_handler.handle(
-            UpdateLicenseCommand(**kwargs)
-        )
+        await self.messagebus_handler.handle(UpdateLicenseCommand(**kwargs))
         return self.messagebus_handler.command_result
 
     async def delete_license(self, id: UUID) -> License:

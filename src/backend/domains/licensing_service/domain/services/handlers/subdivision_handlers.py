@@ -1,12 +1,8 @@
 from abc import ABC
 
-from backend.core.infra.handlers import (
-    AbstractEventHandler, AbstractCommandHandler
-)
+from backend.core.infra.handlers import AbstractCommandHandler, AbstractEventHandler
 
-from ..uow.subdivision_uow import (
-    SubdivisionUnitOfWork
-)
+from ..uow.subdivision_uow import SubdivisionUnitOfWork
 
 
 class SubdivisionEventHandler(AbstractEventHandler, ABC):

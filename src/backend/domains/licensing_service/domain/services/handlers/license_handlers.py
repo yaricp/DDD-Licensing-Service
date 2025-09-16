@@ -1,14 +1,12 @@
 from abc import ABC
 
-from backend.core.infra.handlers import (
-    AbstractEventHandler, AbstractCommandHandler
-)
+from backend.core.infra.handlers import AbstractCommandHandler, AbstractEventHandler
 
 
 class LicenseEventHandler(AbstractEventHandler, ABC):
     """
     Abstract event handler class,
-    from which every licenses event handler should be inherited 
+    from which every licenses event handler should be inherited
     from.
     """
 

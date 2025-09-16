@@ -1,10 +1,15 @@
 # tests/test_license.py
 
-from uuid import uuid4
 from datetime import datetime, timedelta
+from uuid import uuid4
+
 from backend.domains.licensing_service.domain.aggregates.entities.license import License
-from backend.domains.licensing_service.domain.value_objects.license_type import LicenseType
-from backend.domains.licensing_service.domain.value_objects.license_status import LicenseStatus
+from backend.domains.licensing_service.domain.value_objects.license_status import (
+    LicenseStatus,
+)
+from backend.domains.licensing_service.domain.value_objects.license_type import (
+    LicenseType,
+)
 
 
 def test_make_creates_inactive_license():
@@ -14,7 +19,7 @@ def test_make_creates_inactive_license():
         description="Test description",
         type=LicenseType.BYCOUNT,
         subdivision_id=subdivision_id,
-        count_requests=10
+        count_requests=10,
     )
 
     assert license.name == "Test License"
@@ -44,7 +49,7 @@ def test_make_from_persistence_restores_license():
         activated=now,
         expirated=None,
         created=now,
-        expiration=now + timedelta(days=30)
+        expiration=now + timedelta(days=30),
     )
 
     assert license.id == license_id
@@ -61,7 +66,7 @@ def test_activate_and_deactivate():
         description="Test description",
         type=LicenseType.BYCOUNT,
         subdivision_id=subdivision_id,
-        count_requests=10
+        count_requests=10,
     )
 
     license.activate()
@@ -80,7 +85,7 @@ def test_check_by_count_deactivates_if_limit_reached():
         description="Count description",
         type=LicenseType.BYCOUNT,
         subdivision_id=subdivision_id,
-        count_requests=5
+        count_requests=5,
     )
 
     license.check(count_requests=10)
@@ -98,7 +103,7 @@ def test_check_by_time_deactivates_if_expired():
         subdivision_id=subdivision_id,
         count_requests=5,
         status=LicenseStatus.ACTIVE,
-        expiration=past
+        expiration=past,
     )
 
     license.check(count_requests=0)

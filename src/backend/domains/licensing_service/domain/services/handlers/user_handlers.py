@@ -1,8 +1,6 @@
 from abc import ABC
 
-from backend.core.infra.handlers import (
-    AbstractEventHandler, AbstractCommandHandler
-)
+from backend.core.infra.handlers import AbstractCommandHandler, AbstractEventHandler
 
 
 class UserEventHandler(AbstractEventHandler, ABC):

@@ -2,9 +2,7 @@ from abc import ABC
 
 from backend.core.infra.units_of_work import AbstractUnitOfWork
 
-from ..repos.subdivision_repo import (
-    SubdivisionRepository
-)
+from ..repos.subdivision_repo import SubdivisionRepository
 
 
 class SubdivisionUnitOfWork(AbstractUnitOfWork, ABC):

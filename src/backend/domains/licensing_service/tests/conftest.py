@@ -1,15 +1,12 @@
 import pytest_asyncio
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import (
-    create_async_engine, AsyncSession, async_sessionmaker
-)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import clear_mappers
 from sqlalchemy.pool import NullPool
 
 from backend.core.infra.database.config import database_config
 from backend.core.infra.database.metadata import mapper_registry
 from backend.domains.licensing_service.infra.adapters.orm import start_mappers
-
 
 TEST_DB = "test_db"
 
@@ -19,14 +16,14 @@ async def engine():
     """
     Fixture creates a test database and tables once per session.
     """
-    admin_url = '{}+{}://{}:{}@{}:{}/{}'.format(
+    admin_url = "{}+{}://{}:{}@{}:{}/{}".format(
         database_config.DATABASE_DIALECT,
         database_config.DATABASE_DRIVER,
         database_config.DATABASE_USER,
         database_config.DATABASE_PASSWORD,
         database_config.DATABASE_HOST,
         database_config.DATABASE_PORT,
-        "postgres"
+        "postgres",
     )
     admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
 
@@ -40,14 +37,14 @@ async def engine():
 
     await admin_engine.dispose()
 
-    test_url = '{}+{}://{}:{}@{}:{}/{}'.format(
+    test_url = "{}+{}://{}:{}@{}:{}/{}".format(
         database_config.DATABASE_DIALECT,
         database_config.DATABASE_DRIVER,
         database_config.DATABASE_USER,
         database_config.DATABASE_PASSWORD,
         database_config.DATABASE_HOST,
         database_config.DATABASE_PORT,
-        TEST_DB
+        TEST_DB,
     )
     eng = create_async_engine(test_url, echo=False, poolclass=NullPool)
 
@@ -84,8 +81,5 @@ async def clean_db(engine):
 async def db_session(engine):
     """Creates session fabric for tests"""
     return async_sessionmaker(
-        bind=engine,
-        class_=AsyncSession,
-        expire_on_commit=False,
-        autoflush=True
+        bind=engine, class_=AsyncSession, expire_on_commit=False, autoflush=True
     )

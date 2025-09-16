@@ -11,6 +11,6 @@ class Client:
             "user_id": id,
             "email": "yaricp@gmail.com",
             "tg_id": "123123123",
-            "superadmin": True
+            "superadmin": True,
         }
         return user_data

@@ -1,5 +1,5 @@
-from uuid import UUID
 from typing import List
+from uuid import UUID
 
 # --- Application Imports ---
 from ....app.queries.license_queries import LicenseQuery
@@ -7,7 +7,6 @@ from ....app.queries.license_queries import LicenseQuery
 # --- API Imports ---
 from ..schemas.license import License
 from ..services.utils import BaseMapper
-
 
 """
 Can not use Bootstrap object in dependencies,

@@ -2,12 +2,8 @@ from abc import ABC
 
 from backend.core.infra.units_of_work import AbstractUnitOfWork
 
-from ..repos.tenant_repo import (
-    TenantRepository
-)
-from ..repos.user_repo import (
-    UserRepository
-)
+from ..repos.tenant_repo import TenantRepository
+from ..repos.user_repo import UserRepository
 
 
 class TenantUnitOfWork(AbstractUnitOfWork, ABC):

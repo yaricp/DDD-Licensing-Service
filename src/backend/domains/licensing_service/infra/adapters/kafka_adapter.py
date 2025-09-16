@@ -1,47 +1,46 @@
 import sys
-import six
 from datetime import datetime
 from uuid import uuid4
+
+import six
 from sqlalchemy import UUID as ALCH_UUID
 
 if sys.version_info >= (3, 12, 0):
-    sys.modules['kafka.vendor.six.moves'] = six.moves
-    
+    sys.modules["kafka.vendor.six.moves"] = six.moves
+
 from kafka import KafkaConsumer, KafkaProducer
-from kafka.admin import (
-    NewTopic,
-    KafkaAdminClient
-)
+from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import KafkaError, TopicAlreadyExistsError
 
 from backend.core.infra.events import AbstractEvent
 from backend.core.infra.outside_broker.connection import (
-    KAFKA_TOPICS, KAFKA_SERVERS, DEFAULT_KAFKA_TOPIC
+    DEFAULT_KAFKA_TOPIC,
+    KAFKA_SERVERS,
+    KAFKA_TOPICS,
 )
 
-from ...domain.services.events.user_events import (
-    UserCreatedEvent, UserUpdatedEvent
+from ...domain.services.events.license_events import (
+    LicenseActivatedEvent,
+    LicenseCreatedEvent,
+)
+from ...domain.services.events.statistic_row_events import StatisticRowAddedEvent
+from ...domain.services.events.subdivision_events import (
+    SubdivisionCreatedEvent,
+    SubdivisionDeletedEvent,
+    SubdivisionLicenseExpiredEvent,
+    SubdivisionUpdatedEvent,
 )
 from ...domain.services.events.tenant_events import (
-    TenantCreatedEvent, TenantUpdatedEvent, TenantDeletedEvent
+    TenantCreatedEvent,
+    TenantDeletedEvent,
+    TenantUpdatedEvent,
 )
-from ...domain.services.events.license_events import (
-    LicenseCreatedEvent, LicenseActivatedEvent
-)
-from ...domain.services.events.subdivision_events import (
-    SubdivisionCreatedEvent, SubdivisionUpdatedEvent,
-    SubdivisionDeletedEvent, SubdivisionLicenseExpiredEvent
-)
-from ...domain.services.events.statistic_row_events import (
-    StatisticRowAddedEvent
-)
-
-from ..protobuf_types.TenantEvents_pb2 import TenantEvent
-from ..protobuf_types.SubdivisionEvents_pb2 import SubdivisionEvent
+from ...domain.services.events.user_events import UserCreatedEvent, UserUpdatedEvent
 from ..protobuf_types.LicenseEvents_pb2 import LicenseEvent
 from ..protobuf_types.StatisticRowEvents_pb2 import StatisticRowEvent
+from ..protobuf_types.SubdivisionEvents_pb2 import SubdivisionEvent
+from ..protobuf_types.TenantEvents_pb2 import TenantEvent
 from ..protobuf_types.UserEvents_pb2 import UserEvent
-
 
 protobuf_types = {
     UserCreatedEvent: UserEvent,
@@ -55,20 +54,18 @@ protobuf_types = {
     SubdivisionUpdatedEvent: SubdivisionEvent,
     SubdivisionDeletedEvent: SubdivisionEvent,
     SubdivisionLicenseExpiredEvent: SubdivisionEvent,
-    StatisticRowAddedEvent: StatisticRowEvent
+    StatisticRowAddedEvent: StatisticRowEvent,
 }
 
 
 def create_topics(
-    kafka_servers: list = KAFKA_SERVERS,
-    topics: list = KAFKA_TOPICS
+    kafka_servers: list = KAFKA_SERVERS, topics: list = KAFKA_TOPICS
 ) -> None:
     print(f"kafka_servers: {kafka_servers}")
     print(f"topics: {topics}")
 
     admin_client = KafkaAdminClient(
-        bootstrap_servers=kafka_servers,
-        api_version=(1, 0, 0)
+        bootstrap_servers=kafka_servers, api_version=(1, 0, 0)
     )
     consumer = KafkaConsumer(
         bootstrap_servers=kafka_servers,
@@ -79,12 +76,12 @@ def create_topics(
     topic_list = []
     for topic in topics:
         if topic not in existing_topic_list:
-            print('Topic : {} added '.format(topic))
-            topic_list.append(NewTopic(
-                name=topic, num_partitions=1, replication_factor=1
-            ))
+            print("Topic : {} added ".format(topic))
+            topic_list.append(
+                NewTopic(name=topic, num_partitions=1, replication_factor=1)
+            )
         else:
-            print('Topic : {topic} already exist ')
+            print("Topic : {topic} already exist ")
     try:
         if topic_list:
             admin_client.create_topics(new_topics=topic_list, validate_only=False)
@@ -100,14 +97,11 @@ def create_topics(
 class KafkaAdapter:
 
     def __init__(
-        self, topic: str = DEFAULT_KAFKA_TOPIC,
-        kafka_servers: list = KAFKA_SERVERS
+        self, topic: str = DEFAULT_KAFKA_TOPIC, kafka_servers: list = KAFKA_SERVERS
     ) -> None:
         try:
             self.topic = topic
-            self.__producer = KafkaProducer(
-                bootstrap_servers=kafka_servers
-            )
+            self.__producer = KafkaProducer(bootstrap_servers=kafka_servers)
         except Exception as err:
             print(f"Error: {err}")
 
@@ -143,9 +137,7 @@ class KafkaAdapter:
         try:
             kafka_mess = await self.prepare_message(event)
             print(f"kafka_mess: {kafka_mess}")
-            self.__producer.send(
-                self.topic, key=uuid4().bytes, value=kafka_mess
-            )
+            self.__producer.send(self.topic, key=uuid4().bytes, value=kafka_mess)
             self.__producer.flush()
             print("Message sent to Kafka")
         except Exception as e:

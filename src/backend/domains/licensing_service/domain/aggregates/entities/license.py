@@ -1,13 +1,14 @@
 from __future__ import annotations
-from uuid import UUID, uuid4
-from typing import Optional
-from datetime import datetime, timedelta
+
 from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import Optional
+from uuid import UUID, uuid4
 
 from backend.core.domain.entity import AbstractEntity
 
-from ...value_objects.license_type import LicenseType
 from ...value_objects.license_status import LicenseStatus
+from ...value_objects.license_type import LicenseType
 
 
 @dataclass
@@ -52,29 +53,49 @@ class License(AbstractEntity):
 
     @classmethod
     def make(
-        cls, name: str, description: str, type: LicenseType,
-        subdivision_id: UUID, count_requests: int
+        cls,
+        name: str,
+        description: str,
+        type: LicenseType,
+        subdivision_id: UUID,
+        count_requests: int,
     ) -> License:
         return cls(
             id=uuid4(),
-            name=name, description=description,
-            type=type, subdivision_id=subdivision_id,
+            name=name,
+            description=description,
+            type=type,
+            subdivision_id=subdivision_id,
             count_requests=count_requests,
             status=LicenseStatus.INACTIVE,
-            created=datetime.now()
+            created=datetime.now(),
         )
 
     @classmethod
     def make_from_persistence(
-        cls, name: str, description: str, type: LicenseType,
-        subdivision_id: UUID, count_requests: int, id: UUID,
-        status: LicenseStatus, activated: datetime, expirated: datetime,
-        created: datetime, expiration: datetime
+        cls,
+        name: str,
+        description: str,
+        type: LicenseType,
+        subdivision_id: UUID,
+        count_requests: int,
+        id: UUID,
+        status: LicenseStatus,
+        activated: datetime,
+        expirated: datetime,
+        created: datetime,
+        expiration: datetime,
     ) -> License:
         return cls(
-            name=name, description=description,
-            type=type, subdivision_id=subdivision_id,
-            count_requests=count_requests, status=status,
-            created=created, activated=activated,
-            expiration=expiration, id=id, expirated=expirated
+            name=name,
+            description=description,
+            type=type,
+            subdivision_id=subdivision_id,
+            count_requests=count_requests,
+            status=status,
+            created=created,
+            activated=activated,
+            expiration=expiration,
+            id=id,
+            expirated=expirated,
         )

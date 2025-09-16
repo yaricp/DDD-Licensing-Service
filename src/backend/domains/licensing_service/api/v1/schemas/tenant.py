@@ -1,9 +1,10 @@
+from typing import List, Optional
 from uuid import UUID
-from pydantic import BaseModel
-from typing import Optional, List
 
-from .user import User
+from pydantic import BaseModel
+
 from .subdivision import Subdivision
+from .user import User
 
 
 class TenantBase(BaseModel):

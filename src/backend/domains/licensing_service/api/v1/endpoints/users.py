@@ -1,12 +1,12 @@
-from uuid import UUID
 from typing import List, MutableSequence
+from uuid import UUID
+
 from fastapi import APIRouter, Depends
 
 # --- API Imports ---
 from ...deps import get_messagebus_handler
 from ..schemas.user import User
 from ..services.user import get_all_users, get_or_create_user
-
 
 router = APIRouter()
 
@@ -22,8 +22,7 @@ async def read_users_route():
 
 @router.get("/get_or_create/{id}", response_model=User)
 async def get_or_create_user_route(
-    id: UUID,
-    messagebus_handler=Depends(get_messagebus_handler)
+    id: UUID, messagebus_handler=Depends(get_messagebus_handler)
 ):
     user: User = await get_or_create_user(
         user_id=id, messagebus_handler=messagebus_handler

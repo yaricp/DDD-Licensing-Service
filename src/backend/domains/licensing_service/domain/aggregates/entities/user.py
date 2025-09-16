@@ -1,7 +1,8 @@
 from __future__ import annotations
-from uuid import UUID
-from typing import Optional
+
 from dataclasses import dataclass
+from typing import Optional
+from uuid import UUID
 
 from backend.core.domain.entity import AbstractEntity
 

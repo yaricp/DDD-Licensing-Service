@@ -1,6 +1,7 @@
 import asyncio
-import pytest
 from uuid import UUID
+
+import pytest
 
 
 @pytest.mark.asyncio
@@ -18,8 +19,8 @@ async def test_create_tenant(async_client, clean_db):
             "name": "TestTenant",
             "address": "Address123123",
             "email": "email1@co.com",
-            "phone": "123123123"
-        }
+            "phone": "123123123",
+        },
     )
     print(f"response: {response}")
     print(f"response.status_code: {response.status_code}")
@@ -37,6 +38,7 @@ async def test_get_all_tenants(async_client):
     tenants = response.json()
     assert isinstance(tenants, list)
 
+
 @pytest.mark.asyncio
 async def test_get_tenant(async_client, clean_db):
     response = await async_client.get(
@@ -52,8 +54,8 @@ async def test_get_tenant(async_client, clean_db):
             "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "address": "Address12334234",
             "email": "email2@co.com",
-            "phone": "34534534535"
-        }
+            "phone": "34534534535",
+        },
     )
     tenant_id = create_resp.json()["id"]
 
@@ -62,6 +64,7 @@ async def test_get_tenant(async_client, clean_db):
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == tenant_id
+
 
 @pytest.mark.asyncio
 async def test_update_tenant(async_client, clean_db):
@@ -79,8 +82,8 @@ async def test_update_tenant(async_client, clean_db):
             "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "address": "Addreadsffds4",
             "email": "email3@co.com",
-            "phone": "345asdasdasdasd35"
-        }
+            "phone": "345asdasdasdasd35",
+        },
     )
     tenant_id = create_resp.json()["id"]
 
@@ -91,8 +94,8 @@ async def test_update_tenant(async_client, clean_db):
             "name": "TenantUpdated",
             "address": "AddreadsUpdate",
             "email": "email4@co.com",
-            "phone": "345asUpdate"
-        }
+            "phone": "345asUpdate",
+        },
     )
     assert response.status_code == 200
     data = response.json()
@@ -100,6 +103,7 @@ async def test_update_tenant(async_client, clean_db):
     assert data["address"] == "AddreadsUpdate"
     assert data["email"] == "email4@co.com"
     assert data["phone"] == "345asUpdate"
+
 
 @pytest.mark.asyncio
 async def test_delete_tenant(async_client, clean_db):
@@ -111,11 +115,7 @@ async def test_delete_tenant(async_client, clean_db):
     print(f"response.status_code: {response.status_code}")
     assert response.status_code == 200
     create_resp = await async_client.post(
-        "/tenants/",
-        json={
-            "name": "TenantToDelete", 
-            "address": "Tmp"
-        }
+        "/tenants/", json={"name": "TenantToDelete", "address": "Tmp"}
     )
     tenant_id = create_resp.json()["id"]
 

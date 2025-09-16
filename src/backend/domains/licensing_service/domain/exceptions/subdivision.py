@@ -1,12 +1,10 @@
-
-from ..constants import ErrorDetails
 from backend.core.exceptions import (
-    DetailedHTTPException,
-    PreconditionFailedError,
     AlreadyExistsError,
     NotFoundError,
-    ValidationError, BadRequestError
+    ValidationError,
 )
+
+from ..constants import ErrorDetails
 
 
 class SubdivisionAlreadyExistsError(AlreadyExistsError):

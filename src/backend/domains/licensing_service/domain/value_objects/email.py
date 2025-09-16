@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from pydantic import Field
 
 from backend.core.domain.value_object import ValueObject

@@ -1,9 +1,13 @@
-from typing import Dict, Optional, List
+from typing import Dict, List, Optional
 
-from src.users.interfaces.units_of_work import UsersUnitOfWork
-from src.users.interfaces.repositories import UsersRepository, UsersStatisticsRepository, UsersVotesRepository
-from src.users.domain.models import UserModel, UserStatisticsModel, UserVoteModel
 from src.backend.core.interfaces import AbstractModel
+from src.users.domain.models import UserModel, UserStatisticsModel, UserVoteModel
+from src.users.interfaces.repositories import (
+    UsersRepository,
+    UsersStatisticsRepository,
+    UsersVotesRepository,
+)
+from src.users.interfaces.units_of_work import UsersUnitOfWork
 
 
 class FakeUsersRepository(UsersRepository):
@@ -50,8 +54,12 @@ class FakeUsersRepository(UsersRepository):
 
 class FakeUsersStatisticsRepository(UsersStatisticsRepository):
 
-    def __init__(self, users_statistics: Optional[Dict[int, UserStatisticsModel]] = None) -> None:
-        self.users_statistics: Dict[int, UserStatisticsModel] = users_statistics if users_statistics else {}
+    def __init__(
+        self, users_statistics: Optional[Dict[int, UserStatisticsModel]] = None
+    ) -> None:
+        self.users_statistics: Dict[int, UserStatisticsModel] = (
+            users_statistics if users_statistics else {}
+        )
 
     async def get(self, id: int) -> Optional[UserStatisticsModel]:
         return self.users_statistics.get(id)
@@ -92,13 +100,14 @@ class FakeUsersVotesRepository(UsersVotesRepository):
         return self.users_votes.get(id)
 
     async def get_by_voted_for_user_id_and_voting_user_id(
-            self,
-            voted_for_user_id: int,
-            voting_user_id: int
+        self, voted_for_user_id: int, voting_user_id: int
     ) -> Optional[UserVoteModel]:
 
         for vote in self.users_votes.values():
-            if vote.voting_user_id == voting_user_id and vote.voted_for_user_id == voted_for_user_id:
+            if (
+                vote.voting_user_id == voting_user_id
+                and vote.voted_for_user_id == voted_for_user_id
+            ):
                 return vote
 
         return None
@@ -126,10 +135,10 @@ class FakeUsersVotesRepository(UsersVotesRepository):
 class FakeUsersUnitOfWork(UsersUnitOfWork):
 
     def __init__(
-            self,
-            users_repository: UsersRepository,
-            users_statistics_repository: UsersStatisticsRepository,
-            users_votes_repository: UsersVotesRepository
+        self,
+        users_repository: UsersRepository,
+        users_statistics_repository: UsersStatisticsRepository,
+        users_votes_repository: UsersVotesRepository,
     ) -> None:
 
         super().__init__()

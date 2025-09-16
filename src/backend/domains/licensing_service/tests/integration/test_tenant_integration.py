@@ -1,16 +1,22 @@
 # tests/integration/test_tenant_service.py
-import pytest
 from uuid import uuid4
 
-from  backend.core.infra.eventbus import AbstractEventBus
+import pytest
+
+from backend.core.infra.eventbus import AbstractEventBus
+from backend.domains.licensing_service.app.services.tenant_services import TenantService
+from backend.domains.licensing_service.domain.exceptions.tenant import (
+    TenantNotFoundError,
+)
 from backend.domains.licensing_service.domain.services.commands.tenant_commands import (
-    CreateTenantCommand, UpdateTenantCommand
+    CreateTenantCommand,
+    UpdateTenantCommand,
 )
 from backend.domains.licensing_service.domain.services.events.tenant_events import (
-    TenantCreatedEvent, TenantUpdatedEvent, TenantDeletedEvent
+    TenantCreatedEvent,
+    TenantDeletedEvent,
+    TenantUpdatedEvent,
 )
-from backend.domains.licensing_service.app.services.tenant_services import TenantService
-from backend.domains.licensing_service.domain.exceptions.tenant import TenantNotFoundError
 
 
 class MockEventBus(AbstractEventBus):
@@ -35,14 +41,14 @@ async def test_create_and_get_tenant(db_session):
     service = TenantService(
         domain_event_bus=domain_event_bus,
         infra_event_bus=infra_event_bus,
-        db_session_factory=db_session
+        db_session_factory=db_session,
     )
     create_cmd = CreateTenantCommand(
         user_id=uuid4(),
         name="Tenant 1",
         address="123 Main St",
         email="tenant1@example.com",
-        phone="+123456789"
+        phone="+123456789",
     )
 
     tenant = await service.create_tenant(create_cmd)
@@ -70,14 +76,14 @@ async def test_update_tenant(db_session):
     service = TenantService(
         domain_event_bus=domain_event_bus,
         infra_event_bus=infra_event_bus,
-        db_session_factory=db_session
+        db_session_factory=db_session,
     )
     create_cmd = CreateTenantCommand(
         user_id=uuid4(),
         name="Tenant 2",
         address="456 Main St",
         email="tenant2@example.com",
-        phone="+987654321"
+        phone="+987654321",
     )
     tenant = await service.create_tenant(create_cmd)
 
@@ -86,7 +92,7 @@ async def test_update_tenant(db_session):
         name="Tenant 2 Updated",
         address="789 Main St",
         email="updated2@example.com",
-        phone="+1122334455"
+        phone="+1122334455",
     )
 
     updated_tenant = await service.update_tenant(update_cmd)
@@ -114,7 +120,7 @@ async def test_get_all_tenants(db_session):
     service = TenantService(
         domain_event_bus=domain_event_bus,
         infra_event_bus=infra_event_bus,
-        db_session_factory=db_session
+        db_session_factory=db_session,
     )
     count = 5
     for i in range(count):
@@ -123,7 +129,7 @@ async def test_get_all_tenants(db_session):
             name=f"Tenant {i}",
             address=f"123 Main St{i}",
             email=f"tenant{i}@example.com",
-            phone=f"+123456789{i}"
+            phone=f"+123456789{i}",
         )
 
         await service.create_tenant(create_cmd)
@@ -153,14 +159,14 @@ async def test_delete_tenant(db_session):
     service = TenantService(
         domain_event_bus=domain_event_bus,
         infra_event_bus=infra_event_bus,
-        db_session_factory=db_session
+        db_session_factory=db_session,
     )
     create_cmd = CreateTenantCommand(
         user_id=uuid4(),
         name="Tenant 1",
         address="123 Main St",
         email="tenant1@example.com",
-        phone="+123456789"
+        phone="+123456789",
     )
 
     tenant = await service.create_tenant(create_cmd)

@@ -1,12 +1,11 @@
-from uuid import UUID
 from typing import List, MutableSequence
+from uuid import UUID
+
 from fastapi import APIRouter, Depends
 
 # --- API Imports ---
 from ..schemas.license import License
-from ..services.license import (
-    get_license, get_all_licenses
-)
+from ..services.license import get_all_licenses, get_license
 
 router = APIRouter()
 

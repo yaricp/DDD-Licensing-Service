@@ -1,9 +1,9 @@
-from uuid import UUID
-from typing import Optional, List
 from abc import ABC, abstractmethod
+from typing import List, Optional
+from uuid import UUID
 
-from backend.core.infra.repositories import AbstractRepository
 from backend.core.domain.entity import AbstractEntity
+from backend.core.infra.repositories import AbstractRepository
 
 from ....domain.aggregates.entities.user import User
 
@@ -11,7 +11,7 @@ from ....domain.aggregates.entities.user import User
 class UserRepository(AbstractRepository, ABC):
     """
     An interface for work with users, that is used by users unit of work.
-    The main goal is that implementations of this interface can be easily 
+    The main goal is that implementations of this interface can be easily
     replaced in users unit of work.
     using dependency injection without disrupting its functionality.
     """
@@ -31,7 +31,7 @@ class UserRepository(AbstractRepository, ABC):
     @abstractmethod
     async def list(self) -> List[User]:
         raise NotImplementedError
-    
+
     @abstractmethod
     async def get_list_for_tenant(tenant_id: UUID) -> List[User]:
         raise NotImplementedError

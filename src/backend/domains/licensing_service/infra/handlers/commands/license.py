@@ -1,17 +1,12 @@
-from ....domain.services.handlers.license_handlers import (
-    LicenseCommandHandler
-)
-from ....domain.services.commands.license_commands import (
-    CreateLicenseCommand, UpdateLicenseCommand, DeleteLicenseCommand
-)
+from ....app.services.license_services import LicenseService
+from ....app.services.subdivision_services import SubdivisionService
 from ....domain.aggregates.entities.license import License
-
-from ....app.services.license_services import (
-    LicenseService
+from ....domain.services.commands.license_commands import (
+    CreateLicenseCommand,
+    DeleteLicenseCommand,
+    UpdateLicenseCommand,
 )
-from ....app.services.subdivision_services import (
-    SubdivisionService
-)
+from ....domain.services.handlers.license_handlers import LicenseCommandHandler
 
 
 class CreateLicenseCommandHandler(LicenseCommandHandler):
@@ -23,13 +18,10 @@ class CreateLicenseCommandHandler(LicenseCommandHandler):
         operation was successfully executed.
         """
         subdivision_service: SubdivisionService = SubdivisionService(
-            domain_event_bus=self.domain_event_bus,
-            infra_event_bus=self.infra_event_bus
+            domain_event_bus=self.domain_event_bus, infra_event_bus=self.infra_event_bus
         )
         print(f"await command.to_dict(): {await command.to_dict()}")
-        subdivision = await subdivision_service.add_license(
-            add_license_command=command
-        )
+        subdivision = await subdivision_service.add_license(add_license_command=command)
         return subdivision
 
 
@@ -42,8 +34,7 @@ class UpdateLicenseCommandHandler(LicenseCommandHandler):
         operation was successfully executed.
         """
         subdivision_service: SubdivisionService = SubdivisionService(
-            domain_event_bus=self.domain_event_bus,
-            infra_event_bus=self.infra_event_bus
+            domain_event_bus=self.domain_event_bus, infra_event_bus=self.infra_event_bus
         )
         subdivision = await subdivision_service.update_license(
             update_license_command=command
@@ -60,8 +51,7 @@ class DeleteLicenseCommandHandler(LicenseCommandHandler):
         operation was successfully executed.
         """
         subdivision_service: SubdivisionService = SubdivisionService(
-            domain_event_bus=self.domain_event_bus,
-            infra_event_bus=self.infra_event_bus
+            domain_event_bus=self.domain_event_bus, infra_event_bus=self.infra_event_bus
         )
         subdivision = await subdivision_service.delete_license(
             delete_license_command=command
