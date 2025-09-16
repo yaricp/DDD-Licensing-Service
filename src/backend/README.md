@@ -28,7 +28,7 @@ backend/
 - **Domain isolation**: each bounded context (domain) is self-contained, with its own endpoints, adapters, and infrastructure.  
 - **Shared infrastructure**: cross-domain components (database, messaging, monitoring, etc.) live in `infrastructure/`.  
 - **DDD layers**:  
-  - `domain/` contains pure business logic.  
+  - [domain/](./domains/licensing_service/domain/README.md) contains pure business logic.  
   - [app/](./domains/licensing_service/app/README.md) contains use cases (application services).  
   - `infra/` implements persistence and integration.  
 

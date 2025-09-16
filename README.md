@@ -14,10 +14,9 @@ The services are orchestrated via `docker-compose` and can be built and run loca
 ```
 .
 ├── src/
-│   ├── backend/          # API + domains + shared infrastructure
-│   ├── email_channel/    # email notification service
-│   ├── telegram_channel/ # Telegram integration service
-│   ├── kafka_data/       # Kafka topics and test data
+│   ├── backend/          # API + domains + shared infrastructure (docker container)
+│   ├── email_channel/    # email notification service (docker container)
+│   ├── telegram_channel/ # Telegram integration service (docker container)
 │   └── protobuf_types/   # Protobuf schemas and generated types
 ├── scripts/              # Utility scripts (build, tests, etc.)
 ├── docker-compose.yml
